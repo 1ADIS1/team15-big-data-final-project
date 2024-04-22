@@ -245,7 +245,7 @@ def main():
             DropColumns(drop_columns),
             DropNonImputable(non_imputable_columns),
             NormalizeUrl(),
-            ApplyTransform(column_name='year', transform_function=lambda a: int(a))
+            ApplyTransform(column_name="year", transform_function=int),
         ]
     )
 
