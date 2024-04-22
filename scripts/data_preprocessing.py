@@ -237,6 +237,8 @@ def main():
         "manufacturer",
         "lat",
         "long",
+        "odometer",
+        "model"
     ]
 
     # Whole data preprocessing pipeline
@@ -246,6 +248,7 @@ def main():
             DropNonImputable(non_imputable_columns),
             NormalizeUrl(),
             ApplyTransform(column_name="year", transform_function=int),
+            ApplyTransform(column_name="odometer", transform_function=int),
         ]
     )
 
