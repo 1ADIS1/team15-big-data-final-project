@@ -212,6 +212,30 @@ class ApplyTransform(DataTransformer):
         return X
 
 
+class FillNa(DataTransformer):
+    """Fill missing values in a given column"""
+
+    def __init__(self, column_name: str, value):
+        self.column = column_name
+        self.value = value
+
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+        pass
+
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
+        """
+        Fills missing values in a `self.column` as `self.value`
+
+        :param X: The input data
+        :return: The transformed data
+        """
+        X = X.copy()
+        X[self.column] = X[self.column].fillna(self.value)
+        return X
+
+
 def main():
     """Main function for console script to preprocess data"""
     # Constants we defined from data analysis
@@ -249,6 +273,7 @@ def main():
             NormalizeUrl(),
             ApplyTransform(column_name="year", transform_function=int),
             ApplyTransform(column_name="odometer", transform_function=int),
+            FillNa(column_name='paint_color', value='unspecified')
         ]
     )
 
