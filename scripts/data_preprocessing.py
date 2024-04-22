@@ -188,6 +188,30 @@ class DropColumns(DataTransformer):
         return X.drop(columns=self.columns)
 
 
+class ApplyTransform(DataTransformer):
+    """Transformer that applies transformation function to given column"""
+
+    def __init__(self, column_name: str, transform_function):
+        self.column = column_name
+        self.transform_function = transform_function
+
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+        pass
+
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
+        """
+        Transforms specified column by given transform function
+
+        :param X: The input data
+        :return: The transformed data
+        """
+        X = X.copy()
+        X[self.column] = X[self.column].apply(self.transform_function)
+        return X
+
+
 def main():
     """Main function for console script to preprocess data"""
     # Constants we defined from data analysis
@@ -221,6 +245,7 @@ def main():
             DropColumns(drop_columns),
             DropNonImputable(non_imputable_columns),
             NormalizeUrl(),
+            ApplyTransform(column_name='year', transform_function=lambda a: int(a))
         ]
     )
 
