@@ -6,22 +6,18 @@ from pprint import pprint
 
 import psycopg2 as psql
 
+from dotenv import load_dotenv
 
-# Read password from secrets file
-# file = os.path.join("secrets", ".psql.pass")
-# with open(file, "r") as file:
-#     password = file.read().rstrip()
+load_dotenv()
 
-# build connection string
-HOST = "hadoop-04.uni.innopolis.ru"
-PORT = "5432"
-USER = "team15"
-DBNAME = "team15_projectdb"
-
-PSWD = "pytttPLjPeOI7kc1"  # TODO: import from file
+# Build connection string
+HOST = os.getenv("DB_HOST")
+PORT = os.getenv("DB_PORT")
+USER = os.getenv("DB_USER")
+DBNAME = os.getenv("DB_NAME")
+PSWD = os.getenv("DB_PASSWORD")
 
 conn_string = f"host={HOST} port={PORT} user={USER} dbname={DBNAME} password={PSWD}"
-
 
 # Connect to the remote dbms
 with psql.connect(conn_string) as conn:
