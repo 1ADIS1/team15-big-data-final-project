@@ -39,10 +39,7 @@ with psql.connect(conn_string) as conn:
     with open(os.path.join("sql", "import_data.sql"), encoding="utf-8") as file:
         # We assume that the COPY commands in the file are ordered (1.depts, 2.emps)
         commands = file.readlines()
-
-        with open(
-            os.path.join("data", "raw/vehicles.csv"), "r", encoding="utf-8"
-        ) as vehicle:
+        with open(os.path.join("data", "processed/sliced.csv"), "r") as vehicle:
             cur.copy_expert(commands[0], vehicle)
 
     # If the sql statements are CRUD then you need to commit the change
