@@ -18,8 +18,11 @@ else
 fi
 
 # Unzip file and remove artifacts
-unzip data/usedcars.zip -d data/raw/
+unzip -o data/usedcars.zip -d data/raw/
 rm data/usedcars.zip
 
+echo "Data is ready!"
+
 # Run data preprocessing
-python scripts/data_preprocessing.py 'data/raw/vehicles.csv' --output 'data/processed/sliced.csv'
+echo "Running data preprocessing"
+python scripts/data_preprocessing.py "data/raw/vehicles.csv" --output "data/processed/sliced.csv"
