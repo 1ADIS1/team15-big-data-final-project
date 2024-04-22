@@ -1,0 +1,3 @@
+# Fix for bash scripts
+*.sh  text eol=lf
+*.sql text eol=lf
