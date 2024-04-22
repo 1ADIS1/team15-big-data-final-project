@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS car_description;
 CREATE TABLE IF NOT EXISTS car_description (
 	entry_ID BIGINT NOT NULL PRIMARY KEY,
 	region_url VARCHAR(255),
-	price INTEGER NOT NULL,
+	price BIGINT NOT NULL,
 	manufactured_year INTEGER,
 	manufacturer VARCHAR(255),
 	model VARCHAR(255),
