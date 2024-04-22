@@ -1,7 +1,9 @@
-import pandas as pd
+from typing import List
 import argparse
 import os
 import re
+
+import pandas as pd
 
 
 class DataTransformer:
@@ -17,7 +19,7 @@ class DataTransformer:
 
 
 class TransformPipeline:
-    def __init__(self, transformations: list[DataTransformer]):
+    def __init__(self, transformations: List[DataTransformer]):
         self.transformations = transformations
 
     def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
@@ -56,7 +58,7 @@ class NormalizeUrl(DataTransformer):
 
 
 class DropNonImputable(DataTransformer):
-    def __init__(self, non_imputable_cols: list[str]):
+    def __init__(self, non_imputable_cols: List[str]):
         self.non_imputable_cols = non_imputable_cols
 
     def transform(self, X: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -67,7 +69,7 @@ class DropNonImputable(DataTransformer):
 
 
 class DropColumns(DataTransformer):
-    def __init__(self, columns: list[str]):
+    def __init__(self, columns: List[str]):
         self.columns = columns
 
     def transform(self, X: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -83,7 +85,7 @@ def main():
     ]
     non_imputable_columns = [
         'condition', 'cylinders', 'fuel', 'transmission',
-        'drive', 'size', 'type', 'manufacturer'
+        'drive', 'size', 'type', 'manufacturer', 'lat', 'long'
     ]
 
     # whole data preprocessing pipeline
