@@ -3,7 +3,7 @@ START TRANSACTION;
 DROP TABLE IF EXISTS car_description;
 
 CREATE TABLE IF NOT EXISTS car_description (
-	entry_ID INTEGER NOT NULL PRIMARY KEY,
+	entry_ID BIGINT NOT NULL PRIMARY KEY,
 	region_url VARCHAR(255),
 	price INTEGER NOT NULL,
 	manufactured_year INTEGER,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS car_description (
 	paint_color VARCHAR(255),
 	US_state VARCHAR(255),
 	latitude REAL NOT NULL,
-	longitude REAL NOT NULL,
+	longitude REAL NOT NULL
 );
 
 ALTER DATABASE team15_projectdb SET datestyle TO iso, ymd;
