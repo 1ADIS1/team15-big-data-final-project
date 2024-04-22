@@ -1,5 +1,7 @@
 START TRANSACTION;
 
+DROP TABLE IF EXISTS car_description;
+
 CREATE TABLE IF NOT EXISTS car_description (
 	entry_ID INTEGER NOT NULL PRIMARY KEY,
 	region_url VARCHAR(255),
