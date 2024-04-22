@@ -1,1 +1,1 @@
-SELECT * FROM test_table;
+COPY car_description FROM STDIN WITH CSV HEADER DELIMITER ',' QUOTE '\''  NULL AS 'null';

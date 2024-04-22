@@ -1,7 +1,9 @@
+START TRANSACTION;
+
 CREATE TABLE IF NOT EXISTS car_description (
-	entry_ID INTEGER,
+	entry_ID INTEGER NOT NULL PRIMARY KEY,
 	region_url VARCHAR(255),
-	price INTEGER,
+	price INTEGER NOT NULL,
 	manufactured_year INTEGER,
 	manufacturer VARCHAR(255),
 	model VARCHAR(255),
@@ -15,6 +17,10 @@ CREATE TABLE IF NOT EXISTS car_description (
 	car_type VARCHAR(255),
 	paint_color VARCHAR(255),
 	US_state VARCHAR(255),
-	latitude REAL,
-	longitude REAL,
-)
+	latitude REAL NOT NULL,
+	longitude REAL NOT NULL,
+);
+
+ALTER DATABASE team15_projectdb SET datestyle TO iso, ymd;
+
+COMMIT;

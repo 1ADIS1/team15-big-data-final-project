@@ -1,1 +1,1 @@
-SELECT * FROM test_table;
+SELECT * FROM car_description LIMIT 10;
