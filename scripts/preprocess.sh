@@ -5,7 +5,7 @@ dataset_url="https://disk.yandex.com/d/NdpjIZDmP24kng"
 if command -v yadisk-direct >/dev/null 2>&1; then
   dataset_direct_url="$(yadisk-direct $dataset_url)"
 else
-  echo "Command yadisk-direct does not exist! Please, run 'pip -r requirements.txt'"
+  echo "Command yadisk-direct does not exist! Please, run 'pip install -r requirements.txt'"
   exit
 fi
 
