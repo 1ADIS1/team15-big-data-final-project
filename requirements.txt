@@ -1,7 +1,7 @@
 # Install libpq-dev on Ubuntu before running.
+pandas
+psycopg2
 pylint
 pyspark
-pandas
 streamlit
 wldhx.yadisk-direct
-psycopg2
