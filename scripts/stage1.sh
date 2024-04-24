@@ -1,5 +1,5 @@
 #!/bin/bash
-password=$(<secrets.psql.pass)
+password=$(<secrets/.psql.pass)
 
 # Import to PSQL
 python3 scripts/build_projectdb.py
