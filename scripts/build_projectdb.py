@@ -6,34 +6,37 @@ from pprint import pprint
 
 import psycopg2 as psql
 
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build connection string
-HOST = os.getenv("DB_HOST")
-PORT = os.getenv("DB_PORT")
-USER = os.getenv("DB_USER")
-DBNAME = os.getenv("DB_NAME")
-PSWD = os.getenv("DB_PASSWORD")
+HOST = "hadoop-04.uni.innopolis.ru"
+PORT = "5432"
+USER = "team15"
+DBNAME = "team15_projectdb"
 
-conn_string = f"host={HOST} port={PORT} user={USER} dbname={DBNAME} password={PSWD}"
+# Read password from secrets file
+file = os.path.join("secrets", ".psql.pass")
+
+with open(file, "r", encoding="utf8") as file:
+    PSWD = file.read().rstrip()
+
+conn_string = "host={} port={} user={} dbname={} password={}".format(
+    HOST, PORT, USER, DBNAME, PSWD
+)
 
 # Connect to the remote dbms
 with psql.connect(conn_string) as conn:
     # Create a cursor for executing psql commands
     cur = conn.cursor()
 
-    # Read the commands from the file and execute them.
+    # Read the commands from the file and execute them
     with open(os.path.join("sql", "create_tables.sql"), encoding="utf-8") as file:
         content = file.read()
         cur.execute(content)
 
     conn.commit()
 
-    # Read the commands from the file and execute them.
+    # Read the commands from the file and execute them
     with open(os.path.join("sql", "import_data.sql"), encoding="utf-8") as file:
-        # We assume that the COPY commands in the file are ordered (1.depts, 2.emps)
         commands = file.readlines()
 
         with open(

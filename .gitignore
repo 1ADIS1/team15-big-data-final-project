@@ -1,4 +1,6 @@
 .env
 .venv
+
 *.csv
+*.psql.pass
 *.zip
