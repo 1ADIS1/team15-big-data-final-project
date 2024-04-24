@@ -7,5 +7,5 @@ US_state,
 COUNT(entry_ID) as total_vehicles
 FROM car_vehicles_ext_part_bucket
 GROUP BY US_state
-ORDER BY total_vehicles avsc
+ORDER BY total_vehicles ASC
 LIMIT 15;

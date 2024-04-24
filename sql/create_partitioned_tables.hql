@@ -1,4 +1,4 @@
-USE team15_projectdb
+USE team15_projectdb;
 
 SET hive.exec.dynamic.partition.mode = nonstrict;
 SET hive.exec.dynamic.partition = true;

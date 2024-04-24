@@ -14,7 +14,5 @@ SET hive.resultset.use.unique.column.names = false;
 
 -- q2
 --SELECT 
-INSERT INTO q2_results
-FROM car_vehicles_ext_part_bucket;
 
 SELECT * FROM q1_results;
