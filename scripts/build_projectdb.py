@@ -1,11 +1,11 @@
 """ Connects to dataset, creates tables and imports data """
 
 import os
-import toml
 
 from pprint import pprint
 
 import psycopg2 as psql
+import toml
 
 
 # Build connection string
@@ -20,7 +20,8 @@ file = os.path.join("secrets", ".psql.pass")
 with open(file, "r", encoding="utf-8") as f:
     secrets = toml.load(f)
 
-CONN_STRING = f"host={HOST} port={PORT} user={USER} dbname={DBNAME} password={secrets.get('password', 'admin')}"
+PSWD = secrets.get('password', 'admin')
+CONN_STRING = f"host={HOST} port={PORT} user={USER} dbname={DBNAME} password={PSWD}"
 
 # Connect to the remote dbms
 with psql.connect(CONN_STRING) as conn:
