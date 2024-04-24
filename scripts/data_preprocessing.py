@@ -4,6 +4,8 @@ import argparse
 import os
 import re
 
+from typing import List
+
 import pandas as pd
 
 # pylint: disable=C0103
@@ -15,7 +17,7 @@ import pandas as pd
 class DataTransformer:
     """Abstract Data Transformer Class"""
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         """
         Fit the transformer to the data.
 
@@ -25,7 +27,9 @@ class DataTransformer:
         """
         raise NotImplementedError
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Transform the input data.
 
@@ -36,7 +40,9 @@ class DataTransformer:
         """
         raise NotImplementedError
 
-    def fit_transform(self, X, y=None, **kwargs):
+    def fit_transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Fit the transformer to the data and transform the input data.
 
@@ -52,10 +58,10 @@ class DataTransformer:
 class TransformPipeline:
     """Class to chain multiple data transformations together"""
 
-    def __init__(self, transformations):
+    def __init__(self, transformations: List[DataTransformer]):
         self.transformations = transformations
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         """
         Fit each transformation in the pipeline
 
@@ -67,7 +73,9 @@ class TransformPipeline:
         for layer in self.transformations:
             X = layer.fit_transform(X, y=y, **kwargs)
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Apply each transformation in the pipeline to the input data
 
@@ -81,7 +89,9 @@ class TransformPipeline:
             X = layer.transform(X, y=y, **kwargs)
         return X
 
-    def fit_transform(self, X, y=None, **kwargs):
+    def fit_transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Fit and transform the input data using the pipeline
 
@@ -99,13 +109,15 @@ class TransformPipeline:
 class NormalizeUrl(DataTransformer):
     """Transformer that extracts the domain from the given column"""
 
-    def __init__(self, column="region_url"):
+    def __init__(self, column: str = "region_url"):
         self.column = column
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Extracts the domain from the given column
 
@@ -117,7 +129,7 @@ class NormalizeUrl(DataTransformer):
         return X
 
     @staticmethod
-    def extract_domain_url(url):
+    def extract_domain_url(url: str) -> str:
         """
         Extracts the domain from the given url
 
@@ -133,13 +145,15 @@ class NormalizeUrl(DataTransformer):
 class DropNonImputable(DataTransformer):
     """Transformer that drops rows with non-imputable values in the specified columns"""
 
-    def __init__(self, non_imputable_cols):
+    def __init__(self, non_imputable_cols: List[str]):
         self.non_imputable_cols = non_imputable_cols
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Drops rows with non-imputable values in the specified columns
 
@@ -155,13 +169,15 @@ class DropNonImputable(DataTransformer):
 class DropColumns(DataTransformer):
     """Transformer that drops the specified columns"""
 
-    def __init__(self, columns):
+    def __init__(self, columns: List[str]):
         self.columns = columns
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Drops the specified columns
 
@@ -175,14 +191,16 @@ class DropColumns(DataTransformer):
 class ApplyTransform(DataTransformer):
     """Transformer that applies transformation function to given column"""
 
-    def __init__(self, column_name, transform_function):
+    def __init__(self, column_name: str, transform_function):
         self.column = column_name
         self.transform_function = transform_function
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Transforms specified column by given transform function
 
@@ -197,14 +215,16 @@ class ApplyTransform(DataTransformer):
 class FillNa(DataTransformer):
     """Fill missing values in a given column"""
 
-    def __init__(self, column_name, value):
+    def __init__(self, column_name: str, value):
         self.column = column_name
         self.value = value
 
-    def fit(self, X, y=None, **kwargs):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
-    def transform(self, X, y=None, **kwargs):
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
         """
         Fills missing values in a `self.column` as `self.value`
 
@@ -289,9 +309,7 @@ def main():
     transformed = transformed.iloc[: args.limit]
 
     # Save transformed data & make directories if required
-    dir_path = os.path.dirname(args.output)
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+    os.makedirs(os.path.dirname(args.output), exist_ok=True)
     transformed.to_csv(args.output, index=False)
 
 
