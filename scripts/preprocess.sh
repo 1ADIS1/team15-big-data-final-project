@@ -36,5 +36,5 @@ fi
 echo "Data is ready!"
 
 # Run data preprocessing
-echo "Running data preprocessing"
+echo "Running data preprocessing. Please, wait..."
 python3 scripts/data_preprocessing.py "data/raw/vehicles.csv" --output "data/processed/sliced.csv"

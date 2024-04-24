@@ -1,2 +1,2 @@
 #!/bin/bash
-password=$(<secrets/.psql.pass)
+source secrets/.psql.pass
