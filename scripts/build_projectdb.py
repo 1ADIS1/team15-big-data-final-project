@@ -1,7 +1,7 @@
 """ Connects to dataset, creates tables and imports data """
 
 import os
-import tomllib
+import toml
 
 from pprint import pprint
 
@@ -17,8 +17,8 @@ DBNAME = "team15_projectdb"
 # Read password from secrets file
 file = os.path.join("secrets", ".psql.pass")
 
-with open(file, "rb") as f:
-    secrets = tomllib.load(f)
+with open(file, "r", encoding="utf-8") as f:
+    secrets = toml.load(f)
 
 CONN_STRING = f"host={HOST} port={PORT} user={USER} dbname={DBNAME} password={secrets.get('password', 'admin')}"
 
