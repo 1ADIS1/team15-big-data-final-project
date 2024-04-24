@@ -24,3 +24,4 @@ typing_extensions==4.1.1
 urllib3==1.26.18
 wldhx.yadisk-direct==0.0.6
 wrapt==1.16.0
+hivejdbc
