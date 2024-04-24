@@ -8,23 +8,23 @@ DROP TABLE IF EXISTS car_vehicles_ext_part_bucket;
 
 CREATE EXTERNAL TABLE car_vehicles_ext_part_bucket (
     entry_ID BIGINT,
-	region_url VARCHAR(255),
-	price INT,
-	manufactured_year INT,
-	manufacturer VARCHAR(255),
-	model VARCHAR(255),
-	car_condition VARCHAR(255),
-	cylinders VARCHAR(255),
-	fuel VARCHAR(255),
-	odometer INT,
-	transmission VARCHAR(255),
-	car_drive VARCHAR(255),
-	car_size VARCHAR(255),
-	car_type VARCHAR(255),
-	paint_color VARCHAR(255),
-	--US_state VARCHAR(255),
-	latitude DOUBLE,
-	longitude DOUBLE
+    region_url VARCHAR(255),
+    price INT,
+    manufactured_year INT,
+    manufacturer VARCHAR(255),
+    model VARCHAR(255),
+    car_condition VARCHAR(255),
+    cylinders VARCHAR(255),
+    fuel VARCHAR(255),
+    odometer INT,
+    transmission VARCHAR(255),
+    car_drive VARCHAR(255),
+    car_size VARCHAR(255),
+    car_type VARCHAR(255),
+    paint_color VARCHAR(255),
+    --US_state VARCHAR(255),
+    latitude DOUBLE,
+    longitude DOUBLE
 )
 PARTITIONED BY (
     US_state VARCHAR(255)
