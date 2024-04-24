@@ -5,3 +5,4 @@ pylint
 pyspark
 streamlit
 wldhx.yadisk-direct
+python-dotenv
