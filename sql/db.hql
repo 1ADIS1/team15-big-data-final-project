@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS car_description;
 -- Create and load tables to hive
 CREATE EXTERNAL TABLE car_description STORED AS AVRO LOCATION
 'project/warehouse/output' TBLPROPERTIES
-('avro.schema.url'='project/warehouse/avsc/vehicles.avsc');
+('avro.schema.url'='project/warehouse/avsc/car_description.avsc');
 
 -- Check tables
 SELECT COUNT(1) FROM car_description;
