@@ -1,0 +1,115 @@
+{
+  "type" : "record",
+  "name" : "car_description",
+  "doc" : "Sqoop import of car_description",
+  "fields" : [ {
+    "name" : "entry_id",
+    "type" : [ "null", "long" ],
+    "default" : null,
+    "columnName" : "entry_id",
+    "sqlType" : "-5"
+  }, {
+    "name" : "region_url",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "region_url",
+    "sqlType" : "12"
+  }, {
+    "name" : "price",
+    "type" : [ "null", "long" ],
+    "default" : null,
+    "columnName" : "price",
+    "sqlType" : "-5"
+  }, {
+    "name" : "manufactured_year",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "manufactured_year",
+    "sqlType" : "4"
+  }, {
+    "name" : "manufacturer",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "manufacturer",
+    "sqlType" : "12"
+  }, {
+    "name" : "model",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "model",
+    "sqlType" : "12"
+  }, {
+    "name" : "car_condition",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "car_condition",
+    "sqlType" : "12"
+  }, {
+    "name" : "cylinders",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "cylinders",
+    "sqlType" : "12"
+  }, {
+    "name" : "fuel",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "fuel",
+    "sqlType" : "12"
+  }, {
+    "name" : "odometer",
+    "type" : [ "null", "int" ],
+    "default" : null,
+    "columnName" : "odometer",
+    "sqlType" : "4"
+  }, {
+    "name" : "transmission",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "transmission",
+    "sqlType" : "12"
+  }, {
+    "name" : "car_drive",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "car_drive",
+    "sqlType" : "12"
+  }, {
+    "name" : "car_size",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "car_size",
+    "sqlType" : "12"
+  }, {
+    "name" : "car_type",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "car_type",
+    "sqlType" : "12"
+  }, {
+    "name" : "paint_color",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "paint_color",
+    "sqlType" : "12"
+  }, {
+    "name" : "us_state",
+    "type" : [ "null", "string" ],
+    "default" : null,
+    "columnName" : "us_state",
+    "sqlType" : "12"
+  }, {
+    "name" : "latitude",
+    "type" : [ "null", "float" ],
+    "default" : null,
+    "columnName" : "latitude",
+    "sqlType" : "7"
+  }, {
+    "name" : "longitude",
+    "type" : [ "null", "float" ],
+    "default" : null,
+    "columnName" : "longitude",
+    "sqlType" : "7"
+  } ],
+  "tableName" : "car_description"
+}
