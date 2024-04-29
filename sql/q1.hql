@@ -18,10 +18,11 @@ US_state,
 COUNT(entry_ID) as total_vehicles
 FROM car_vehicles_ext_part_bucket
 GROUP BY US_state
-ORDER BY total_vehicles DESC
-LIMIT 10;
+ORDER BY total_vehicles DESC;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q1' 
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
-SELECT * FROM q1_results;
+SELECT * FROM q1_results
+ORDER BY total_vehicles DESC
+LIMIT 15;
