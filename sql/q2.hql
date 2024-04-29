@@ -12,6 +12,7 @@ LOCATION 'project/hive/warehouse/q2';
 SET hive.resultset.use.unique.column.names = false;
 
 -- q2
+USE teamx_projectdb;
 INSERT INTO q2_results
 SELECT 
 US_state,
