@@ -1,3 +1,7 @@
+# Big Data Project
+
+Repository location on cluster: `~/team15-big-data-final-project`
+
 This repository is a template for the final project of big data course in IU-2023. It contains the following directories:
 
 - `data/` contains the dataset files.
