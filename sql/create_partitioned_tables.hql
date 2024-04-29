@@ -56,5 +56,5 @@ SELECT
     paint_color,
     latitude,
     longitude,
-    US_state
+--    US_state
 FROM car_description;
