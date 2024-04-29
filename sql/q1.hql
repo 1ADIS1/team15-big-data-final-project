@@ -12,6 +12,7 @@ LOCATION 'project/hive/warehouse/q1';
 SET hive.resultset.use.unique.column.names = false;
 
 -- q1
+USE team15_projectdb;
 INSERT INTO q1_results
 SELECT 
 US_state,
@@ -21,4 +22,5 @@ GROUP BY US_state
 ORDER BY total_vehicles ASC
 LIMIT 15;
 
+USE team15_projectdb;
 SELECT * FROM q1_results;
