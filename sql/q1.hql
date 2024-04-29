@@ -23,6 +23,6 @@ ORDER BY total_vehicles DESC;
 INSERT OVERWRITE DIRECTORY 'project/output/q1' 
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
-SELECT * FROM q1_results
+SELECT US_state, total_vehicles FROM q1_results
 ORDER BY total_vehicles DESC
 LIMIT 15;
