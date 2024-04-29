@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS car_vehicles_ext_part_bucket;
 CREATE EXTERNAL TABLE car_vehicles_ext_part_bucket (
     entry_ID BIGINT,
     region_url VARCHAR(255),
-    price INT,
+    price BIGINT,
     manufactured_year INT,
     manufacturer VARCHAR(255),
     model VARCHAR(255),
