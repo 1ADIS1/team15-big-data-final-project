@@ -11,10 +11,7 @@ LOCATION 'project/hive/warehouse/q1';
 
 SET hive.resultset.use.unique.column.names = false;
 
-USE teamx_projectdb;
-
 -- q1
-USE team15_projectdb;
 INSERT INTO q1_results
 SELECT 
 US_state,
@@ -24,7 +21,6 @@ GROUP BY US_state
 ORDER BY total_vehicles DESC
 LIMIT 10;
 
-USE team15_projectdb;
 INSERT OVERWRITE DIRECTORY 'project/output/q1' 
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
