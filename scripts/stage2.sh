@@ -1,7 +1,7 @@
 #!/bin/bash
 source secrets/.psql.pass
 
-hdfs dfs -mkdir -p project/output/q1
+#hdfs dfs -mkdir -p project/output/q1
 
 beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/create_partitioned_tables.hql
 
