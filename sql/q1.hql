@@ -6,7 +6,7 @@ US_state STRING,
 total_vehicles INT
 )
 ROW FORMAT DELIMITED
-FIELDS TERMINIATED BY ','
+FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/q1'; 
 
 SET hive.resultset.use.unique.column.names = false;
