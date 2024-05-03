@@ -8,10 +8,32 @@ from typing import List
 
 import pandas as pd
 
-# pylint: disable=C0103
-# because sklearn format for ML
-# See:
-# https://github.com/scikit-learn/scikit-learn/blob/872124551/sklearn/preprocessing/_data.py#L851
+# Constants we defined from data analysis
+DROP_COLUMNS = [
+    "url",
+    "region",
+    "title_status",
+    "VIN",
+    "image_url",
+    "description",
+    "county",
+    "posting_date",
+]
+
+NON_IMPUTABLE_COLUMNS = [
+    "condition",
+    "cylinders",
+    "fuel",
+    "transmission",
+    "drive",
+    "size",
+    "type",
+    "manufacturer",
+    "lat",
+    "long",
+    "odometer",
+    "model",
+]
 
 
 class DataTransformer:
@@ -238,55 +260,35 @@ class FillNa(DataTransformer):
 
 def main():
     """Main function for console script to preprocess data"""
-    # Constants we defined from data analysis
-    drop_columns = [
-        "url",
-        "region",
-        "title_status",
-        "VIN",
-        "image_url",
-        "description",
-        "county",
-        "posting_date",
-    ]
-
-    non_imputable_columns = [
-        "condition",
-        "cylinders",
-        "fuel",
-        "transmission",
-        "drive",
-        "size",
-        "type",
-        "manufacturer",
-        "lat",
-        "long",
-        "odometer",
-        "model"
-    ]
 
     # Whole data preprocessing pipeline
     pipeline = TransformPipeline(
         [
-            DropColumns(drop_columns),
-            DropNonImputable(non_imputable_columns),
+            DropColumns(DROP_COLUMNS),
+            DropNonImputable(NON_IMPUTABLE_COLUMNS),
             NormalizeUrl(),
             ApplyTransform(column_name="year", transform_function=int),
             ApplyTransform(column_name="odometer", transform_function=int),
-            FillNa(column_name='paint_color', value='unspecified')
+            FillNa(column_name="paint_color", value="unspecified"),
         ]
     )
 
     # Control script via console
     parser = argparse.ArgumentParser(
         prog="DataPreprocessor",
-        description="Drops too ambiguous columns, "
-        "Drop rows with non-imputable values "
-        "and Normalize urls",
+        description="Drops too ambiguous columns, Drop rows with non-imputable values and Normalize urls",
     )
-    parser.add_argument("filename", type=str, help="Input file path")
     parser.add_argument(
-        "-o", "--output", type=str, default="output.csv", help="Output file path"
+        "filename",
+        type=str,
+        help="Input file path",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        help="Output file path",
+        default="output.csv",
     )
     parser.add_argument(
         "-l",

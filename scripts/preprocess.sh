@@ -1,9 +1,8 @@
 #!/bin/bash
 dataset_url="https://disk.yandex.com/d/NdpjIZDmP24kng"
 
-already_exists=false
-
 # Check if dataset already exists
+already_exists=false
 if [ -f data/raw/vehicles.csv ]; then
   already_exists=true
   echo "Dataset already exists! Skipping downloading..."
