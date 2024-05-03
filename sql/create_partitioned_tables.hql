@@ -29,7 +29,7 @@ CREATE EXTERNAL TABLE car_vehicles_ext_part_bucket (
 PARTITIONED BY (
     US_state VARCHAR(255)
 )
-CLUSTERED BY (entry_ID) INTO 10 buckets
+CLUSTERED BY (entry_ID) INTO 3 buckets
 STORED AS AVRO LOCATION
 'project/hive/warehouse/car_vehicles_ext_part_bucket'
 TBLPROPERTIES ('AVRO.COMPRESS' = 'SNAPPY');
