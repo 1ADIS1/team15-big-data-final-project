@@ -15,9 +15,10 @@ SET hive.resultset.use.unique.column.names = false;
 INSERT INTO q2_results
 SELECT 
 US_state,
-AVG(price) OVER (PARTITION BY US_state) as avg_price
+AVG(price) as avg_price
 FROM car_vehicles_ext_part_bucket
-ORDER BY avg_price ASC
+GROUP BY (US_state)
+ORDER BY avg_price DESC;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q2' 
 ROW FORMAT DELIMITED FIELDS 
