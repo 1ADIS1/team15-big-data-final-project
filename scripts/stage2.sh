@@ -30,11 +30,20 @@ beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password 
 # beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/q3.hql
 # hdfs dfs -cat project/output/q3/* >> output/q3.csv
 
-# 4th query
-# Clean outputs
-hdfs dfs -rm -r project/output/q4
-hdfs dfs -rm -r project/hive/warehouse/q4
+# # 4th query
+# # Clean outputs
+# hdfs dfs -rm -r project/output/q4
+# hdfs dfs -rm -r project/hive/warehouse/q4
 
-echo "US_state,avg_mileage" > output/q4.csv 
-beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/q4.hql
-hdfs dfs -cat project/output/q4/* >> output/q4.csv
+# echo "US_state,avg_mileage" > output/q4.csv 
+# beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/q4.hql
+# hdfs dfs -cat project/output/q4/* >> output/q4.csv
+
+# 5th query
+# Clean outputs
+hdfs dfs -rm -r project/output/q5
+hdfs dfs -rm -r project/hive/warehouse/q5
+
+echo "US_state,avg_mileage" > output/q5.csv 
+beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/q5.hql
+hdfs dfs -cat project/output/q5/* >> output/q5.csv
