@@ -15,10 +15,8 @@ SET hive.resultset.use.unique.column.names = false;
 INSERT INTO q3_results
 SELECT 
 US_state,
-AVG(mileage) as avg_mileage
-FROM car_vehicles_ext_part_bucket
-GROUP BY US_state
-ORDER BY avg_mileage DESC;
+AVG(mileage) OVER (PARTITION BY US_state) as avg_mileage
+FROM car_vehicles_ext_part_bucket;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q3' 
 ROW FORMAT DELIMITED FIELDS 
