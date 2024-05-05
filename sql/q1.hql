@@ -24,5 +24,4 @@ INSERT OVERWRITE DIRECTORY 'project/output/q1'
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
 SELECT US_state, total_vehicles FROM q1_results
-ORDER BY total_vehicles DESC
-LIMIT 15;
+ORDER BY total_vehicles DESC;

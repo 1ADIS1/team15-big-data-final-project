@@ -23,5 +23,4 @@ INSERT OVERWRITE DIRECTORY 'project/output/q5'
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
 SELECT manufactured_year, count_years FROM q5_results
-ORDER BY count_years DESC
-LIMIT 15;
+ORDER BY count_years DESC;

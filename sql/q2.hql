@@ -23,5 +23,4 @@ INSERT OVERWRITE DIRECTORY 'project/output/q2'
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
 SELECT US_state, avg_price FROM q2_results
-ORDER BY avg_price DESC
-LIMIT 15;
+ORDER BY avg_price DESC;

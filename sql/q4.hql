@@ -23,5 +23,4 @@ INSERT OVERWRITE DIRECTORY 'project/output/q4'
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
 SELECT manufacturer, count_cars FROM q4_results
-ORDER BY count_cars DESC
-LIMIT 15;
+ORDER BY count_cars DESC;

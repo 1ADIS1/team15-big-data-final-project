@@ -23,5 +23,4 @@ INSERT OVERWRITE DIRECTORY 'project/output/q3'
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
 SELECT US_state, avg_mileage FROM q3_results
-ORDER BY avg_mileage DESC
-LIMIT 15;
+ORDER BY avg_mileage DESC;
