@@ -17,7 +17,6 @@ SELECT
 DISTINCT
 US_state,
 AVG(odometer) OVER (PARTITION BY US_state) as avg_mileage
-GROUP BY US_state
 FROM car_vehicles_ext_part_bucket;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q3' 
