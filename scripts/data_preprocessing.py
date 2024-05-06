@@ -258,6 +258,40 @@ class FillNa(DataTransformer):
         return X
 
 
+class QuantileFilter(DataTransformer):
+    def __init__(self, column_name: str, lower_quantile: float, upper_quantile: float):
+        self.column = column_name
+        self.lower_quantile = lower_quantile
+        self.upper_quantile = upper_quantile
+
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+        self.lower_bound = X[self.column].quantile(self.lower_quantile)
+        self.upper_bound = X[self.column].quantile(self.upper_quantile)
+
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
+        X = X.copy()
+        return X[
+            (X[self.column] >= self.lower_bound) & (X[self.column] <= self.upper_bound)
+        ]
+
+
+class DropIfEqual(DataTransformer):
+    def __init__(self, column_name: str, value):
+        self.column = column_name
+        self.value = value
+
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+        pass
+
+    def transform(
+        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+    ) -> pd.DataFrame:
+        X = X.copy()
+        return X[X[self.column] != self.value]
+
+
 def main():
     """Main function for console script to preprocess data"""
 
@@ -266,6 +300,10 @@ def main():
         [
             DropColumns(DROP_COLUMNS),
             DropNonImputable(NON_IMPUTABLE_COLUMNS),
+            DropIfEqual(column_name="price", value=0),
+            QuantileFilter(
+                column_name="price", lower_quantile=0.05, upper_quantile=0.95
+            ),
             NormalizeUrl(),
             ApplyTransform(column_name="year", transform_function=int),
             ApplyTransform(column_name="odometer", transform_function=int),
