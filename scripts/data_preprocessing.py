@@ -18,6 +18,7 @@ DROP_COLUMNS = [
     "description",
     "county",
     "posting_date",
+    "model",
 ]
 
 NON_IMPUTABLE_COLUMNS = [
@@ -341,6 +342,7 @@ def main():
 
     # Read data & determine limit
     df = pd.read_csv(args.filename)
+
     if args.limit is None:
         args.limit = df.shape[0]
 
