@@ -8,7 +8,7 @@ prediction DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_prediction';
+LOCATION 'project/hive/warehouse/lr_predictions';
 
 LOAD DATA INPATH 'project/output/lr_predictions.csv' OVERWRITE INTO TABLE lr_predictions;
 
@@ -20,7 +20,7 @@ prediction DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/dt_prediction';
+LOCATION 'project/hive/warehouse/dt_predictions';
 
 LOAD DATA INPATH 'project/output/dt_predictions.csv' OVERWRITE INTO TABLE dt_predictions;
 
