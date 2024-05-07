@@ -33,12 +33,6 @@
     "columnName" : "manufacturer",
     "sqlType" : "12"
   }, {
-    "name" : "model",
-    "type" : [ "null", "string" ],
-    "default" : null,
-    "columnName" : "model",
-    "sqlType" : "12"
-  }, {
     "name" : "car_condition",
     "type" : [ "null", "string" ],
     "default" : null,

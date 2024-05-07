@@ -2,7 +2,7 @@
 // WARNING: This class is AUTO-GENERATED. Modify at your own risk.
 //
 // Debug information:
-// Generated date: Tue May 07 21:47:08 MSK 2024
+// Generated date: Tue May 07 22:25:25 MSK 2024
 // For connector: org.apache.sqoop.manager.PostgresqlManager
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
@@ -68,12 +68,6 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
       @Override
       public void setField(Object value) {
         car_description.this.manufacturer = (String)value;
-      }
-    });
-    setters.put("model", new FieldSetterCommand() {
-      @Override
-      public void setField(Object value) {
-        car_description.this.model = (String)value;
       }
     });
     setters.put("car_condition", new FieldSetterCommand() {
@@ -205,17 +199,6 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
   }
   public car_description with_manufacturer(String manufacturer) {
     this.manufacturer = manufacturer;
-    return this;
-  }
-  private String model;
-  public String get_model() {
-    return model;
-  }
-  public void set_model(String model) {
-    this.model = model;
-  }
-  public car_description with_model(String model) {
-    this.model = model;
     return this;
   }
   private String car_condition;
@@ -364,7 +347,6 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
     equal = equal && (this.price == null ? that.price == null : this.price.equals(that.price));
     equal = equal && (this.manufactured_year == null ? that.manufactured_year == null : this.manufactured_year.equals(that.manufactured_year));
     equal = equal && (this.manufacturer == null ? that.manufacturer == null : this.manufacturer.equals(that.manufacturer));
-    equal = equal && (this.model == null ? that.model == null : this.model.equals(that.model));
     equal = equal && (this.car_condition == null ? that.car_condition == null : this.car_condition.equals(that.car_condition));
     equal = equal && (this.cylinders == null ? that.cylinders == null : this.cylinders.equals(that.cylinders));
     equal = equal && (this.fuel == null ? that.fuel == null : this.fuel.equals(that.fuel));
@@ -393,7 +375,6 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
     equal = equal && (this.price == null ? that.price == null : this.price.equals(that.price));
     equal = equal && (this.manufactured_year == null ? that.manufactured_year == null : this.manufactured_year.equals(that.manufactured_year));
     equal = equal && (this.manufacturer == null ? that.manufacturer == null : this.manufacturer.equals(that.manufacturer));
-    equal = equal && (this.model == null ? that.model == null : this.model.equals(that.model));
     equal = equal && (this.car_condition == null ? that.car_condition == null : this.car_condition.equals(that.car_condition));
     equal = equal && (this.cylinders == null ? that.cylinders == null : this.cylinders.equals(that.cylinders));
     equal = equal && (this.fuel == null ? that.fuel == null : this.fuel.equals(that.fuel));
@@ -415,19 +396,18 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
     this.price = JdbcWritableBridge.readLong(3, __dbResults);
     this.manufactured_year = JdbcWritableBridge.readInteger(4, __dbResults);
     this.manufacturer = JdbcWritableBridge.readString(5, __dbResults);
-    this.model = JdbcWritableBridge.readString(6, __dbResults);
-    this.car_condition = JdbcWritableBridge.readString(7, __dbResults);
-    this.cylinders = JdbcWritableBridge.readString(8, __dbResults);
-    this.fuel = JdbcWritableBridge.readString(9, __dbResults);
-    this.odometer = JdbcWritableBridge.readInteger(10, __dbResults);
-    this.transmission = JdbcWritableBridge.readString(11, __dbResults);
-    this.car_drive = JdbcWritableBridge.readString(12, __dbResults);
-    this.car_size = JdbcWritableBridge.readString(13, __dbResults);
-    this.car_type = JdbcWritableBridge.readString(14, __dbResults);
-    this.paint_color = JdbcWritableBridge.readString(15, __dbResults);
-    this.us_state = JdbcWritableBridge.readString(16, __dbResults);
-    this.latitude = JdbcWritableBridge.readFloat(17, __dbResults);
-    this.longitude = JdbcWritableBridge.readFloat(18, __dbResults);
+    this.car_condition = JdbcWritableBridge.readString(6, __dbResults);
+    this.cylinders = JdbcWritableBridge.readString(7, __dbResults);
+    this.fuel = JdbcWritableBridge.readString(8, __dbResults);
+    this.odometer = JdbcWritableBridge.readInteger(9, __dbResults);
+    this.transmission = JdbcWritableBridge.readString(10, __dbResults);
+    this.car_drive = JdbcWritableBridge.readString(11, __dbResults);
+    this.car_size = JdbcWritableBridge.readString(12, __dbResults);
+    this.car_type = JdbcWritableBridge.readString(13, __dbResults);
+    this.paint_color = JdbcWritableBridge.readString(14, __dbResults);
+    this.us_state = JdbcWritableBridge.readString(15, __dbResults);
+    this.latitude = JdbcWritableBridge.readFloat(16, __dbResults);
+    this.longitude = JdbcWritableBridge.readFloat(17, __dbResults);
   }
   public void readFields0(ResultSet __dbResults) throws SQLException {
     this.entry_id = JdbcWritableBridge.readLong(1, __dbResults);
@@ -435,19 +415,18 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
     this.price = JdbcWritableBridge.readLong(3, __dbResults);
     this.manufactured_year = JdbcWritableBridge.readInteger(4, __dbResults);
     this.manufacturer = JdbcWritableBridge.readString(5, __dbResults);
-    this.model = JdbcWritableBridge.readString(6, __dbResults);
-    this.car_condition = JdbcWritableBridge.readString(7, __dbResults);
-    this.cylinders = JdbcWritableBridge.readString(8, __dbResults);
-    this.fuel = JdbcWritableBridge.readString(9, __dbResults);
-    this.odometer = JdbcWritableBridge.readInteger(10, __dbResults);
-    this.transmission = JdbcWritableBridge.readString(11, __dbResults);
-    this.car_drive = JdbcWritableBridge.readString(12, __dbResults);
-    this.car_size = JdbcWritableBridge.readString(13, __dbResults);
-    this.car_type = JdbcWritableBridge.readString(14, __dbResults);
-    this.paint_color = JdbcWritableBridge.readString(15, __dbResults);
-    this.us_state = JdbcWritableBridge.readString(16, __dbResults);
-    this.latitude = JdbcWritableBridge.readFloat(17, __dbResults);
-    this.longitude = JdbcWritableBridge.readFloat(18, __dbResults);
+    this.car_condition = JdbcWritableBridge.readString(6, __dbResults);
+    this.cylinders = JdbcWritableBridge.readString(7, __dbResults);
+    this.fuel = JdbcWritableBridge.readString(8, __dbResults);
+    this.odometer = JdbcWritableBridge.readInteger(9, __dbResults);
+    this.transmission = JdbcWritableBridge.readString(10, __dbResults);
+    this.car_drive = JdbcWritableBridge.readString(11, __dbResults);
+    this.car_size = JdbcWritableBridge.readString(12, __dbResults);
+    this.car_type = JdbcWritableBridge.readString(13, __dbResults);
+    this.paint_color = JdbcWritableBridge.readString(14, __dbResults);
+    this.us_state = JdbcWritableBridge.readString(15, __dbResults);
+    this.latitude = JdbcWritableBridge.readFloat(16, __dbResults);
+    this.longitude = JdbcWritableBridge.readFloat(17, __dbResults);
   }
   public void loadLargeObjects(LargeObjectLoader __loader)
       throws SQLException, IOException, InterruptedException {
@@ -465,20 +444,19 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
     JdbcWritableBridge.writeLong(price, 3 + __off, -5, __dbStmt);
     JdbcWritableBridge.writeInteger(manufactured_year, 4 + __off, 4, __dbStmt);
     JdbcWritableBridge.writeString(manufacturer, 5 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(model, 6 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_condition, 7 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(cylinders, 8 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(fuel, 9 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeInteger(odometer, 10 + __off, 4, __dbStmt);
-    JdbcWritableBridge.writeString(transmission, 11 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_drive, 12 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_size, 13 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_type, 14 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(paint_color, 15 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(us_state, 16 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeFloat(latitude, 17 + __off, 7, __dbStmt);
-    JdbcWritableBridge.writeFloat(longitude, 18 + __off, 7, __dbStmt);
-    return 18;
+    JdbcWritableBridge.writeString(car_condition, 6 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(cylinders, 7 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(fuel, 8 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeInteger(odometer, 9 + __off, 4, __dbStmt);
+    JdbcWritableBridge.writeString(transmission, 10 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(car_drive, 11 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(car_size, 12 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(car_type, 13 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(paint_color, 14 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(us_state, 15 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeFloat(latitude, 16 + __off, 7, __dbStmt);
+    JdbcWritableBridge.writeFloat(longitude, 17 + __off, 7, __dbStmt);
+    return 17;
   }
   public void write0(PreparedStatement __dbStmt, int __off) throws SQLException {
     JdbcWritableBridge.writeLong(entry_id, 1 + __off, -5, __dbStmt);
@@ -486,19 +464,18 @@ public class car_description extends SqoopRecord  implements DBWritable, Writabl
     JdbcWritableBridge.writeLong(price, 3 + __off, -5, __dbStmt);
     JdbcWritableBridge.writeInteger(manufactured_year, 4 + __off, 4, __dbStmt);
     JdbcWritableBridge.writeString(manufacturer, 5 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(model, 6 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_condition, 7 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(cylinders, 8 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(fuel, 9 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeInteger(odometer, 10 + __off, 4, __dbStmt);
-    JdbcWritableBridge.writeString(transmission, 11 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_drive, 12 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_size, 13 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(car_type, 14 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(paint_color, 15 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeString(us_state, 16 + __off, 12, __dbStmt);
-    JdbcWritableBridge.writeFloat(latitude, 17 + __off, 7, __dbStmt);
-    JdbcWritableBridge.writeFloat(longitude, 18 + __off, 7, __dbStmt);
+    JdbcWritableBridge.writeString(car_condition, 6 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(cylinders, 7 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(fuel, 8 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeInteger(odometer, 9 + __off, 4, __dbStmt);
+    JdbcWritableBridge.writeString(transmission, 10 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(car_drive, 11 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(car_size, 12 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(car_type, 13 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(paint_color, 14 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeString(us_state, 15 + __off, 12, __dbStmt);
+    JdbcWritableBridge.writeFloat(latitude, 16 + __off, 7, __dbStmt);
+    JdbcWritableBridge.writeFloat(longitude, 17 + __off, 7, __dbStmt);
   }
   public void readFields(DataInput __dataIn) throws IOException {
 this.readFields0(__dataIn);  }
@@ -527,11 +504,6 @@ this.readFields0(__dataIn);  }
         this.manufacturer = null;
     } else {
     this.manufacturer = Text.readString(__dataIn);
-    }
-    if (__dataIn.readBoolean()) { 
-        this.model = null;
-    } else {
-    this.model = Text.readString(__dataIn);
     }
     if (__dataIn.readBoolean()) { 
         this.car_condition = null;
@@ -624,12 +596,6 @@ this.readFields0(__dataIn);  }
     } else {
         __dataOut.writeBoolean(false);
     Text.writeString(__dataOut, manufacturer);
-    }
-    if (null == this.model) { 
-        __dataOut.writeBoolean(true);
-    } else {
-        __dataOut.writeBoolean(false);
-    Text.writeString(__dataOut, model);
     }
     if (null == this.car_condition) { 
         __dataOut.writeBoolean(true);
@@ -735,12 +701,6 @@ this.readFields0(__dataIn);  }
         __dataOut.writeBoolean(false);
     Text.writeString(__dataOut, manufacturer);
     }
-    if (null == this.model) { 
-        __dataOut.writeBoolean(true);
-    } else {
-        __dataOut.writeBoolean(false);
-    Text.writeString(__dataOut, model);
-    }
     if (null == this.car_condition) { 
         __dataOut.writeBoolean(true);
     } else {
@@ -837,8 +797,6 @@ this.readFields0(__dataIn);  }
     __sb.append(fieldDelim);
     __sb.append(FieldFormatter.escapeAndEnclose(manufacturer==null?"null":manufacturer, delimiters));
     __sb.append(fieldDelim);
-    __sb.append(FieldFormatter.escapeAndEnclose(model==null?"null":model, delimiters));
-    __sb.append(fieldDelim);
     __sb.append(FieldFormatter.escapeAndEnclose(car_condition==null?"null":car_condition, delimiters));
     __sb.append(fieldDelim);
     __sb.append(FieldFormatter.escapeAndEnclose(cylinders==null?"null":cylinders, delimiters));
@@ -877,8 +835,6 @@ this.readFields0(__dataIn);  }
     __sb.append(FieldFormatter.escapeAndEnclose(manufactured_year==null?"null":"" + manufactured_year, delimiters));
     __sb.append(fieldDelim);
     __sb.append(FieldFormatter.escapeAndEnclose(manufacturer==null?"null":manufacturer, delimiters));
-    __sb.append(fieldDelim);
-    __sb.append(FieldFormatter.escapeAndEnclose(model==null?"null":model, delimiters));
     __sb.append(fieldDelim);
     __sb.append(FieldFormatter.escapeAndEnclose(car_condition==null?"null":car_condition, delimiters));
     __sb.append(fieldDelim);
@@ -1001,15 +957,6 @@ this.readFields0(__dataIn);  }
     }
     if (__cur_str.equals("null")) { this.manufacturer = null; } else {
       this.manufacturer = __cur_str;
-    }
-
-    if (__it.hasNext()) {
-        __cur_str = __it.next();
-    } else {
-        __cur_str = "null";
-    }
-    if (__cur_str.equals("null")) { this.model = null; } else {
-      this.model = __cur_str;
     }
 
     if (__it.hasNext()) {
@@ -1175,15 +1122,6 @@ this.readFields0(__dataIn);  }
     } else {
         __cur_str = "null";
     }
-    if (__cur_str.equals("null")) { this.model = null; } else {
-      this.model = __cur_str;
-    }
-
-    if (__it.hasNext()) {
-        __cur_str = __it.next();
-    } else {
-        __cur_str = "null";
-    }
     if (__cur_str.equals("null")) { this.car_condition = null; } else {
       this.car_condition = __cur_str;
     }
@@ -1304,7 +1242,6 @@ this.readFields0(__dataIn);  }
     __sqoop$field_map.put("price", this.price);
     __sqoop$field_map.put("manufactured_year", this.manufactured_year);
     __sqoop$field_map.put("manufacturer", this.manufacturer);
-    __sqoop$field_map.put("model", this.model);
     __sqoop$field_map.put("car_condition", this.car_condition);
     __sqoop$field_map.put("cylinders", this.cylinders);
     __sqoop$field_map.put("fuel", this.fuel);
@@ -1326,7 +1263,6 @@ this.readFields0(__dataIn);  }
     __sqoop$field_map.put("price", this.price);
     __sqoop$field_map.put("manufactured_year", this.manufactured_year);
     __sqoop$field_map.put("manufacturer", this.manufacturer);
-    __sqoop$field_map.put("model", this.model);
     __sqoop$field_map.put("car_condition", this.car_condition);
     __sqoop$field_map.put("cylinders", this.cylinders);
     __sqoop$field_map.put("fuel", this.fuel);
