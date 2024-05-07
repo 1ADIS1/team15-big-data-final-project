@@ -3,7 +3,7 @@ USE team15_projectdb;
 DROP TABLE IF EXISTS q3_results;
 CREATE EXTERNAL TABLE q3_results(
 US_state STRING,
-avg_mileage DOUBLE
+median_mileage DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -16,11 +16,11 @@ INSERT INTO q3_results
 SELECT 
 DISTINCT
 CONCAT('US-', UPPER(US_state)),
-AVG(odometer) OVER (PARTITION BY US_state) as avg_mileage
+PERCENTILE(odometer, 0.5) OVER (PARTITION BY US_state) as median_mileage
 FROM car_vehicles_ext_part_bucket;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q3' 
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
-SELECT US_state, avg_mileage FROM q3_results
+SELECT US_state, median_mileage FROM q3_results
 ORDER BY avg_mileage DESC;
