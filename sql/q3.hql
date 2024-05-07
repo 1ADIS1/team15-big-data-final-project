@@ -23,4 +23,4 @@ INSERT OVERWRITE DIRECTORY 'project/output/q3'
 ROW FORMAT DELIMITED FIELDS 
 TERMINATED BY ',' 
 SELECT US_state, median_mileage FROM q3_results
-ORDER BY avg_mileage DESC;
+ORDER BY median_mileage DESC;
