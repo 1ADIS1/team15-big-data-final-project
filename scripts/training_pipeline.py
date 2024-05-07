@@ -136,7 +136,7 @@ def get_model_metrics(evaluator: RegressionEvaluator, predictions):
 def main():
     spark = (
         SparkSession.builder.appName(f"{TEAM} - spark ML")
-        .master("yarn")
+        # .master("yarn")
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
         .config("spark.sql.warehouse.dir", WAREHOUSE)
         .config("spark.sql.avro.compression.codec", "snappy")
@@ -173,7 +173,7 @@ def main():
     outputs = {}
 
     # Train models
-    for model_name in ["lr", "dt"]:
+    for model_name in ["dt", "lr"]:
         evaluator = RegressionEvaluator(labelCol="label", predictionCol="prediction")
 
         if model_name == "lr":
@@ -181,7 +181,7 @@ def main():
 
             grid_search = (
                 ParamGridBuilder()
-                .addGrid(model.regParam, [0.0, 0.01, 0.1])
+                .addGrid(model.regParam, [0.01, 0.05, 0.1])
                 .addGrid(model.elasticNetParam, [0.5, 1.0])
                 .build()
             )
@@ -190,7 +190,7 @@ def main():
 
             grid_search = (
                 ParamGridBuilder()
-                .addGrid(model.maxDepth, [3, 5, 7])
+                .addGrid(model.maxDepth, [5, 7, 10])
                 .addGrid(model.minInstancesPerNode, [1, 3, 5])
                 .build()
             )
@@ -228,10 +228,12 @@ def main():
         # Save the model and predictions
         outputs[model_name] = (model_best, predictions)
 
+        print(f"Finished working on {model_name}")
+
     # Create data frame to report performance of the models
     models = [
-        ["lr", *get_model_metrics(evaluator, outputs["lr"][1])],
-        ["dt", *get_model_metrics(evaluator, outputs["dt"][1])],
+        [str(outputs["lr"][0]), *get_model_metrics(evaluator, outputs["lr"][1])],
+        [str(outputs["dt"][0]), *get_model_metrics(evaluator, outputs["dt"][1])],
     ]
 
     df = spark.createDataFrame(models, ["model", "RMSE", "R2", "MAE"])
@@ -246,3 +248,7 @@ def main():
         .option("header", "true")
         .save("project/output/evaluation.csv")
     )
+
+
+if __name__ == "__main__":
+    main()
