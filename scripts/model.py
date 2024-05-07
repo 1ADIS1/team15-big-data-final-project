@@ -11,7 +11,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType, FloatType
 
-from pyspark.ml.regression import LinearRegression, DecisionTreeRegressionModel
+from pyspark.ml.regression import LinearRegression, DecisionTreeRegressor
 from pyspark.ml.evaluation import RegressionEvaluator
 
 import numpy as np
@@ -138,18 +138,18 @@ spark.sql("SHOW TABLES").show()
 print(spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show())
 
 cars = spark.read.format("avro").table("team15_projectdb.car_vehicles_ext_part_bucket")
+
 data = pipeline.fit(cars).transform(cars)
+data = data.withColumnRenamed("price", "label")
 
 (train_data, test_data) = data.randomSplit([0.8, 0.2])
 
 # Create models
-lr_model = LinearRegression(labelCol="price", featuresCol="features")
-dt_model = DecisionTreeRegressionModel(labelCol="price", featuresCol="features")
+lr_model = LinearRegression(labelCol="label", featuresCol="features")
+dt_model = DecisionTreeRegressor(labelCol="label", featuresCol="features")
 
 # Create evaluators
-evaluator = RegressionEvaluator(
-    labelCol="label", predictionCol="prediction", metricName="rmse"
-)
+evaluator = RegressionEvaluator(labelCol="label", predictionCol="prediction")
 
 # Create hyperparameter optimization grid search
 lr_grid_search = (
