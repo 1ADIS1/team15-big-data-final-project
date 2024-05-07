@@ -12,7 +12,6 @@ CREATE EXTERNAL TABLE car_vehicles_ext_part_bucket (
     price BIGINT,
     manufactured_year INT,
     manufacturer VARCHAR(255),
-    model VARCHAR(255),
     car_condition VARCHAR(255),
     cylinders VARCHAR(255),
     fuel VARCHAR(255),
@@ -22,7 +21,6 @@ CREATE EXTERNAL TABLE car_vehicles_ext_part_bucket (
     car_size VARCHAR(255),
     car_type VARCHAR(255),
     paint_color VARCHAR(255),
-    --US_state VARCHAR(255),
     latitude DOUBLE,
     longitude DOUBLE
 )
@@ -44,7 +42,6 @@ SELECT
     price,
     manufactured_year,
     manufacturer,
-    model,
     car_condition,
     cylinders,
     fuel,
