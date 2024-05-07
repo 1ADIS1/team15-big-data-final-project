@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from pyspark import keyword_only
 
 from pyspark.ml import Pipeline, Transformer
@@ -73,10 +71,37 @@ categorical_cols = [
     "us_state",
     "region_url",
 ]
+
 numerical_cols = [
     "manufactured_year",
     "odometer",
 ]
+
+
+# Add here your team number teamx
+team = "team15"
+
+# Location of your Hive database in HDFS
+warehouse = "project/hive/warehouse"
+
+spark = (
+    SparkSession.builder.appName(f"{team} - spark ML")
+    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+    .config("spark.sql.warehouse.dir", warehouse)
+    .config("spark.sql.avro.compression.codec", "snappy")
+    .enableHiveSupport()
+    .getOrCreate()
+)
+
+# We can also add
+# .config("spark.sql.catalogImplementation","hive")\
+# But this is the default configuration
+# You can switch to Spark Catalog by setting "in-memory" for "spark.sql.catalogImplementation"
+spark.sql("SHOW DATABASES").show()
+spark.sql("USE team15_projectdb").show()
+spark.sql("SHOW TABLES").show()
+
+print(spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show())
 
 
 # Define the stages of the pipeline
@@ -111,31 +136,6 @@ stages += [assembler]
 # Create the pipeline
 pipeline = Pipeline(stages=stages)
 
-
-# Add here your team number teamx
-team = "team15"
-
-# Location of your Hive database in HDFS
-warehouse = "project/hive/warehouse"
-
-spark = (
-    SparkSession.builder.appName("{} - spark ML".format(team))
-    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
-    .config("spark.sql.warehouse.dir", warehouse)
-    .config("spark.sql.avro.compression.codec", "snappy")
-    .enableHiveSupport()
-    .getOrCreate()
-)
-
-# We can also add
-# .config("spark.sql.catalogImplementation","hive")\
-# But this is the default configuration
-# You can switch to Spark Catalog by setting "in-memory" for "spark.sql.catalogImplementation"
-spark.sql("SHOW DATABASES").show()
-spark.sql("USE team15_projectdb").show()
-spark.sql("SHOW TABLES").show()
-
-print(spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show())
 
 cars = spark.read.format("avro").table("team15_projectdb.car_vehicles_ext_part_bucket")
 
