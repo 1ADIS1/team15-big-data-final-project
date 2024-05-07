@@ -15,7 +15,7 @@ SET hive.resultset.use.unique.column.names = false;
 INSERT INTO q3_results
 SELECT 
 DISTINCT
-US_state,
+CONCAT('US-', UPPER(US_state)),
 AVG(odometer) OVER (PARTITION BY US_state) as avg_mileage
 FROM car_vehicles_ext_part_bucket;
 
