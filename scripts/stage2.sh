@@ -1,6 +1,15 @@
 #!/bin/bash
 source secrets/.psql.pass
 
+# Move generated files to output folder
+mv *.java output
+mv *.avsc output
+
+# Now move files from output to hdfs/warehouse
+hdfs dfs -mkdir -p project/warehouse/avsc
+hdfs dfs -put -f output/*.avsc project/warehouse/avsc
+
+# 
 beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/create_partitioned_tables.hql
 
 # 1st query
