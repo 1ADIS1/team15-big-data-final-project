@@ -134,11 +134,11 @@ def get_model_metrics(evaluator: RegressionEvaluator, predictions):
     return rmse, r2, mae
 
 
-def df_to_csv(df, path):
+def df_to(df, path, format="csv"):
     (
         df.coalesce(1)
         .write.mode("overwrite")
-        .format("csv")
+        .format(format)
         .option("sep", ",")
         .option("header", "true")
         .save(path)
@@ -162,7 +162,18 @@ def make_features_decriptions(spark):
     )
     df_descriptions.show(truncate=False)
 
-    df_to_csv(df_descriptions, f"project/output/feature_extraction.csv")
+    df_to(df_descriptions, f"project/output/feature_extraction.csv")
+
+
+def get_train_test_split(data, train_size: float = 0.8):
+    (train_data, test_data) = data.randomSplit([train_size, 1 - train_size])
+
+    # Save the train and test data
+    df_to(train_data, "project/output/train_data.json", format="json")
+    df_to(test_data, "project/output/test_data.json", format="json")
+    msg.good("Train and test data saved")
+
+    return train_data, test_data
 
 
 def main():
@@ -172,8 +183,6 @@ def main():
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
         .config("spark.sql.warehouse.dir", WAREHOUSE)
         .config("spark.sql.avro.compression.codec", "snappy")
-        .config("spark.executor.memory", "10g")
-        .config("spark.driver.memory", "10g")
         .enableHiveSupport()
         .getOrCreate()
     )
@@ -209,7 +218,7 @@ def main():
     data = data.withColumnRenamed("price", "label")
 
     # Split data
-    (train_data, test_data) = data.randomSplit([0.8, 0.2])
+    (train_data, test_data) = get_train_test_split(data, train_size=0.8)
 
     outputs = {}
 
@@ -253,11 +262,12 @@ def main():
 
         # Get and save the best models
         model_best.write().overwrite().save(f"project/models/{model_name}_model")
+        msg.good(f"Model saved for {model_name}")
 
         # Get and save the predictions
         predictions = model_best.transform(test_data)
 
-        df_to_csv(
+        df_to(
             predictions.select("label", "prediction"),
             f"project/output/{model_name}_predictions.csv",
         )
@@ -278,13 +288,13 @@ def main():
         df_hyperparams = spark.createDataFrame([hyperparams], list(hyperparams.keys()))
         df_hyperparams.show(truncate=False)
 
-        df_to_csv(df_hyperparams, f"project/output/{model_name}_hyperparams.csv")
+        df_to(df_hyperparams, f"project/output/{model_name}_hyperparams.csv")
         msg.good(f"Hyperparameters saved for {model_name}")
 
         # Get and save the metrics
         metrics = get_model_metrics(evaluator, predictions)
 
-        df_to_csv(
+        df_to(
             spark.createDataFrame([metrics], ["RMSE", "R2", "MAE"]),
             f"project/output/{model_name}_evaluation.csv",
         )
@@ -306,7 +316,7 @@ def main():
     df_models.show(truncate=False)
 
     # Save model comparison
-    df_to_csv(df_models, "project/output/evaluation.csv")
+    df_to(df_models, "project/output/evaluation.csv")
     msg.good("Model comparison saved")
 
     spark.stop()

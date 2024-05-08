@@ -20,7 +20,7 @@ function merge_csv_and_transfer() {
     return
   fi
 
-  path_hdfs="project/output/$1.csv/"
+  path_hdfs="project/output/$1.csv"
   path_local="output/$1.csv"
   path_hive="project/hive/warehouse/$1"
 
