@@ -15,6 +15,9 @@ mkdir models
 hdfs dfs -get project/models/lr_model models/lr_model
 hdfs dfs -get project/models/dt_model models/dt_model
 
+# Get feature extraction
+hdfs dfs -cat project/output/feature_extraction.csv/*.csv > output/feature_extraction.csv
+
 # Move predictions
 hdfs dfs -cat project/output/lr_predictions.csv/*.csv > output/lr_predictions.csv
 hdfs dfs -cat project/output/dt_predictions.csv/*.csv > output/dt_predictions.csv
