@@ -147,7 +147,7 @@ def df_to_csv(df, path):
 def main():
     spark = (
         SparkSession.builder.appName(f"{TEAM} - spark ML")
-        # .master("yarn")
+        .master("yarn")
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
         .config("spark.sql.warehouse.dir", WAREHOUSE)
         .config("spark.sql.avro.compression.codec", "snappy")
@@ -160,7 +160,7 @@ def main():
     # But this is the default configuration
     # You can switch to Spark Catalog by setting "in-memory" for "spark.sql.catalogImplementation"
     spark.sql("SHOW DATABASES").show()
-    spark.sql("USE team15_projectdb").show()
+    spark.sql("USE team15_projectdb")
     spark.sql("SHOW TABLES").show()
 
     spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show()
@@ -217,17 +217,19 @@ def main():
         cv_model = cv.fit(train_data)
         model_best = cv_model.bestModel
 
+        # Create dirs
+        os.makedirs("project/models/", exist_ok=True)
+        os.makedirs("project/output/", exist_ok=True)
+
         # Get and save the best models
-        os.makedirs("models/", exist_ok=True)
-        model_best.write().overwrite().save(f"models/{model_name}_model")
+        model_best.write().overwrite().save(f"project/models/{model_name}_model")
 
         # Get and save the predictions
         predictions = model_best.transform(test_data)
 
-        os.makedirs("output/", exist_ok=True)
         df_to_csv(
             predictions.select("label", "prediction"),
-            f"output/{model_name}_predictions.csv",
+            f"project/output/{model_name}_predictions.csv",
         )
 
         # Get and save the best hyperparameters
@@ -245,16 +247,14 @@ def main():
         df_hyperparams = spark.createDataFrame([hyperparams], list(hyperparams.keys()))
         df_hyperparams.show(truncate=False)
 
-        os.makedirs("output/", exist_ok=True)
-        df_to_csv(df_hyperparams, f"output/{model_name}_hyperparams.csv")
+        df_to_csv(df_hyperparams, f"project/output/{model_name}_hyperparams.csv")
 
         # Get and save the metrics
         metrics = get_model_metrics(evaluator, predictions)
 
-        os.makedirs("output/", exist_ok=True)
         df_to_csv(
             spark.createDataFrame([metrics], ["RMSE", "R2", "MAE"]),
-            f"output/{model_name}_evaluation.csv",
+            f"project/output/{model_name}_evaluation.csv",
         )
 
         # Save the model, predictions and metrics
@@ -271,7 +271,7 @@ def main():
     df_models.show(truncate=False)
 
     # Save model comparison
-    df_to_csv(df_models, "output/evaluation.csv")
+    df_to_csv(df_models, "project/output/evaluation.csv")
 
 
 if __name__ == "__main__":

@@ -33,7 +33,6 @@ NON_IMPUTABLE_COLUMNS = [
     "lat",
     "long",
     "odometer",
-    "model",
 ]
 
 
@@ -300,6 +299,7 @@ def main():
     pipeline = TransformPipeline(
         [
             DropColumns(DROP_COLUMNS),
+            FillNa(column_name="paint_color", value="unspecified"),
             DropNonImputable(NON_IMPUTABLE_COLUMNS),
             DropIfEqual(column_name="price", value=0),
             QuantileFilter(
@@ -308,7 +308,6 @@ def main():
             NormalizeUrl(),
             ApplyTransform(column_name="year", transform_function=int),
             ApplyTransform(column_name="odometer", transform_function=int),
-            FillNa(column_name="paint_color", value="unspecified"),
         ]
     )
 
