@@ -10,7 +10,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',';
 -- LOCATION 'project/hive/warehouse/lr_predictions';
 
-LOAD DATA LOCAL INPATH 'project/output/lr_predictions.csv/combined.csv' OVERWRITE INTO TABLE lr_predictions;
+LOAD DATA LOCAL INPATH 'output/lr_predictions.csv' OVERWRITE INTO TABLE lr_predictions;
 
 -- Load DT model predictions
 DROP TABLE IF EXISTS dt_predictions;
