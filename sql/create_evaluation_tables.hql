@@ -14,7 +14,7 @@ TBLPROPERTIES ("skip.header.line.count"="1");
 -- Load DT model predictions
 DROP TABLE IF EXISTS dt_predictions;
 CREATE EXTERNAL TABLE dt_predictions(
-    labrl DOUBLE,
+    label DOUBLE,
     prediction DOUBLE
 )
 ROW FORMAT DELIMITED
