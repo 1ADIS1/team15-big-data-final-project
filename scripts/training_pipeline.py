@@ -141,7 +141,7 @@ def df_to_csv(df, path):
         .format("csv")
         .option("sep", ",")
         .option("header", "true")
-        .write.csv(path)
+        .csv(path)
     )
 
 

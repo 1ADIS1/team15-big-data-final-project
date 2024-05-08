@@ -20,7 +20,7 @@ file = os.path.join("secrets", ".psql.pass")
 with open(file, "r", encoding="utf-8") as f:
     secrets = toml.load(f)
 
-PSWD = secrets.get('password', 'admin')
+PSWD = secrets.get("password", "admin")
 CONN_STRING = f"host={HOST} port={PORT} user={USER} dbname={DBNAME} password={PSWD}"
 
 # Connect to the remote dbms
