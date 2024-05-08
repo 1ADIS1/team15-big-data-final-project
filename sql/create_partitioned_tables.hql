@@ -55,3 +55,5 @@ SELECT
     longitude,
     US_state
 FROM car_description;
+
+DROP TABLE IF EXISTS car_description;
