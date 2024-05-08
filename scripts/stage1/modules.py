@@ -1,4 +1,4 @@
-""" Data Preprocessing Script for Car Price Prediction Dataset """
+""" Script for abstract pandas-like transformers """
 
 from typing import List
 
