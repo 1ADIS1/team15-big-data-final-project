@@ -39,42 +39,42 @@ NON_IMPUTABLE_COLUMNS = [
 class DataTransformer:
     """Abstract Data Transformer Class"""
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         """
         Fit the transformer to the data.
 
-        :param x: The input data
-        :param y: The target data
+        :param features: The input data
+        :param labels: The target data
         :param kwargs: Additional arguments
         """
         raise NotImplementedError
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Transform the input data.
 
-        :param x: The input data
-        :param y: The target data
+        :param features: The input data
+        :param labels: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
         raise NotImplementedError
 
     def fit_transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Fit the transformer to the data and transform the input data.
 
-        :param x: The input data
-        :param y: The target data
+        :param features: The input data
+        :param labels: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
-        self.fit(x=x, y=y, **kwargs)
-        return self.transform(x=x, y=y, **kwargs)
+        self.fit(features=features, labels=labels, **kwargs)
+        return self.transform(features=features, labels=labels, **kwargs)
 
 
 class TransformPipeline:
@@ -83,49 +83,49 @@ class TransformPipeline:
     def __init__(self, transformations: List[DataTransformer]):
         self.transformations = transformations
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         """
         Fit each transformation in the pipeline
 
-        :param x: The input data
-        :param y: The target data
+        :param features: The input data
+        :param labels: The target data
         :param kwargs: Additional arguments
         """
-        x = x.copy()
+        features = features.copy()
         for layer in self.transformations:
-            x = layer.fit_transform(x, y=y, **kwargs)
+            features = layer.fit_transform(features, labels=labels, **kwargs)
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Apply each transformation in the pipeline to the input data
 
-        :param x: The input data
-        :param y: The target data
+        :param features: The input data
+        :param labels: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
-        x = x.copy()
+        features = features.copy()
         for layer in self.transformations:
-            x = layer.transform(x, y=y, **kwargs)
-        return x
+            features = layer.transform(features, labels=labels, **kwargs)
+        return features
 
     def fit_transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Fit and transform the input data using the pipeline
 
-        :param x: The input data
-        :param y: The target data
+        :param features: The input data
+        :param labels: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
-        x = x.copy()
+        features = features.copy()
         for layer in self.transformations:
-            x = layer.fit_transform(x, y=y, **kwargs)
-        return x
+            features = layer.fit_transform(features, labels=labels, **kwargs)
+        return features
 
 
 class NormalizeUrl(DataTransformer):
@@ -134,21 +134,21 @@ class NormalizeUrl(DataTransformer):
     def __init__(self, column: str = "region_url"):
         self.column = column
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Extracts the domain from the given column
 
-        :param x: The input data
+        :param features: The input data
         :return: The transformed data
         """
-        x = x.copy()
-        x[self.column] = x[self.column].apply(self.extract_domain_url)
-        return x
+        features = features.copy()
+        features[self.column] = features[self.column].apply(self.extract_domain_url)
+        return features
 
     @staticmethod
     def extract_domain_url(url: str) -> str:
@@ -170,22 +170,22 @@ class DropNonImputable(DataTransformer):
     def __init__(self, non_imputable_cols: List[str]):
         self.non_imputable_cols = non_imputable_cols
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Drops rows with non-imputable values in the specified columns
 
-        :param x: The input data
+        :param features: The input data
         :return: The transformed data
         """
-        x = x.copy()
+        features = features.copy()
         for column_name in self.non_imputable_cols:
-            x = x[x[column_name].notna()]
-        return x
+            features = features[features[column_name].notna()]
+        return features
 
 
 class DropColumns(DataTransformer):
@@ -194,20 +194,20 @@ class DropColumns(DataTransformer):
     def __init__(self, columns: List[str]):
         self.columns = columns
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Drops the specified columns
 
-        :param x: The input data
+        :param features: The input data
         :return: The transformed data
         """
-        x = x.copy()
-        return x.drop(columns=self.columns)
+        features = features.copy()
+        return features.drop(columns=self.columns)
 
 
 class ApplyTransform(DataTransformer):
@@ -217,21 +217,21 @@ class ApplyTransform(DataTransformer):
         self.column = column_name
         self.transform_function = transform_function
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Transforms specified column by given transform function
 
-        :param x: The input data
+        :param features: The input data
         :return: The transformed data
         """
-        x = x.copy()
-        x[self.column] = x[self.column].apply(self.transform_function)
-        return x
+        features = features.copy()
+        features[self.column] = features[self.column].apply(self.transform_function)
+        return features
 
 
 class FillNa(DataTransformer):
@@ -241,11 +241,11 @@ class FillNa(DataTransformer):
         self.column = column_name
         self.value = value
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Fills missing values in a `self.column` as `self.value`
@@ -253,9 +253,9 @@ class FillNa(DataTransformer):
         :param x: The input data
         :return: The transformed data
         """
-        x = x.copy()
-        x[self.column] = x[self.column].fillna(self.value)
-        return x
+        features = features.copy()
+        features[self.column] = features[self.column].fillna(self.value)
+        return features
 
 
 class QuantileFilter(DataTransformer):
@@ -269,19 +269,19 @@ class QuantileFilter(DataTransformer):
         self.lower_bound = None
         self.upper_bound = None
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
-        self.lower_bound = x[self.column].quantile(self.lower_quantile)
-        self.upper_bound = x[self.column].quantile(self.upper_quantile)
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
+        self.lower_bound = features[self.column].quantile(self.lower_quantile)
+        self.upper_bound = features[self.column].quantile(self.upper_quantile)
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         if not self.lower_bound or not self.upper_bound:
             raise ValueError("Bounds not set. Call fit before transform")
 
-        x = x.copy()
-        return x[
-            (x[self.column] >= self.lower_bound) & (x[self.column] <= self.upper_bound)
+        features = features.copy()
+        return features[
+            (features[self.column] >= self.lower_bound) & (features[self.column] <= self.upper_bound)
         ]
 
 
@@ -292,14 +292,14 @@ class DropIfEqual(DataTransformer):
         self.column = column_name
         self.value = value
 
-    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, features: pd.DataFrame, labels: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
-        x = x.copy()
-        return x[x[self.column] != self.value]
+        features = features.copy()
+        return features[features[self.column] != self.value]
 
 
 def main():
@@ -360,13 +360,13 @@ def main():
     args = parser.parse_args()
 
     # Read data & determine limit
-    df = pd.read_csv(args.filename)
+    dataframe = pd.read_csv(args.filename)
 
     if args.limit is None:
-        args.limit = df.shape[0]
+        args.limit = dataframe.shape[0]
 
     # Apply transformations and slice
-    transformed = pipeline.fit_transform(df)
+    transformed = pipeline.fit_transform(dataframe)
     transformed = transformed.iloc[: args.limit]
 
     # Save transformed data & make directories if required
