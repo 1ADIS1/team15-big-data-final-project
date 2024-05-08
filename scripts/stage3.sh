@@ -1,34 +1,33 @@
 #!/bin/bash
 source secrets/.psql.pass
 
-python3 scripts/training_pipeline.py
+spark-submit --master yarn scripts/training_pipeline.py
 
-# Put models on HDFS
-hdfs dfs -get models/lr_model models/lr_model
-hdfs dfs -get models/dt_model models/dt_model
+# Clear models folder
+# on HDFS
+hdfs dfs -rm -r -f project/models
 
-# Put predictions
-hdfs dfs -cat output/lr_predictions.csv/*.csv > project/output/lr_predictions.csv
-hdfs dfs -cat output/dt_predictions.csv/*.csv > project/output/dt_predictions.csv
+# and on local
+rm -rf models
+mkdir models
 
-# Put hyperparameters
-hdfs dfs -cat output/lr_hyperparams.csv/*.csv > project/output/lr_hyperparams.csv
-hdfs dfs -cat output/dt_hyperparams.csv/*.csv > project/output/dt_hyperparams.csv
+# Get models
+hdfs dfs -get project/models/lr_model models/lr_model
+hdfs dfs -get project/models/dt_model models/dt_model
 
-# Put evaluations
-hdfs dfs -cat output/lr_evaluation.csv/*.csv > project/output/lr_evaluation.csv
-hdfs dfs -cat output/dt_evaluation.csv/*.csv > project/output/dt_evaluation.csv
+# Move predictions
+hdfs dfs -cat project/output/lr_predictions.csv/*.csv > output/lr_predictions.csv
+hdfs dfs -cat project/output/dt_predictions.csv/*.csv > output/dt_predictions.csv
 
-# Put comparison
-hdfs dfs -cat output/evaluation.csv/*.csv > project/output/evaluation.csv
+# Move predictions
+hdfs dfs -cat project/output/lr_hyperparams.csv/*.csv > output/lr_hyperparams.csv
+hdfs dfs -cat project/output/dt_hyperparams.csv/*.csv > output/dt_hyperparams.csv
 
-hdfs dfs -put -f output/lr_predictions.csv project/output
-hdfs dfs -put -f output/dt_predictions.csv project/output
-hdfs dfs -put -f output/evaluation.csv project/output
-hdfs dfs -put -f output/lr_evaluation.csv project/output
-hdfs dfs -put -f output/dt_evaluation.csv project/output
-hdfs dfs -put -f output/lr_hyperparameters.csv project/output
-hdfs dfs -put -f output/dt_hyperparameters.csv project/output
-hdfs dfs -put -f output/feature_extraction.csv project/output
+# Move evaluations
+hdfs dfs -cat project/output/lr_evaluation.csv/*.csv > output/lr_evaluation.csv
+hdfs dfs -cat project/output/dt_evaluation.csv/*.csv > output/dt_evaluation.csv
+
+# Move comparison
+hdfs dfs -cat project/output/evaluation.csv/*.csv > output/evaluation.csv
 
 beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/create_evaluation_tables.hql

@@ -2,6 +2,8 @@
 .ipynb_checkpoints
 .venv
 
+venv
+
 *.csv
 *.psql.pass
 *.zip
