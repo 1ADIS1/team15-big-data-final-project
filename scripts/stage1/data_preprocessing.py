@@ -7,9 +7,13 @@ import pandas as pd
 
 from modules import TransformPipeline
 from transformers import (
-    DropColumns, FillNa, DropNonImputable,
-    DropIfEqual, QuantileFilter,
-    NormalizeUrl, ApplyTransform
+    DropColumns,
+    FillNa,
+    DropNonImputable,
+    DropIfEqual,
+    QuantileFilter,
+    NormalizeUrl,
+    ApplyTransform,
 )
 
 # Constants we defined from data analysis

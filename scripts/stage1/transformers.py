@@ -1,13 +1,11 @@
 """ Script for implemented transformers """
 
-
 import re
 
+from modules import DataTransformer
 from typing import List
 
 import pandas as pd
-
-from modules import DataTransformer
 
 
 class NormalizeUrl(DataTransformer):
@@ -163,7 +161,8 @@ class QuantileFilter(DataTransformer):
 
         features = features.copy()
         return features[
-            (features[self.column] >= self.lower_bound) & (features[self.column] <= self.upper_bound)
+            (features[self.column] >= self.lower_bound)
+            & (features[self.column] <= self.upper_bound)
         ]
 
 
