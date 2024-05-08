@@ -5,8 +5,8 @@ import os
 
 import pandas as pd
 
-from modules import TransformPipeline
-from transformers import (
+from stage1.modules import TransformPipeline
+from stage1.transformers import (
     DropColumns,
     FillNa,
     DropNonImputable,

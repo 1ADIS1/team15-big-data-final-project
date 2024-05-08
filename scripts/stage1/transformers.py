@@ -2,7 +2,7 @@
 
 import re
 
-from modules import DataTransformer
+from stage1.modules import DataTransformer
 from typing import List
 
 import pandas as pd
