@@ -50,13 +50,13 @@ LOCATION_COLS = [
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
     @keyword_only
-    def __init__(self, inputCols=None, outputCols=None):
+    def __init__(self, inputCols: list[str] = None, outputCols: list[str] = None):
         super(LatLongToXYZ, self).__init__()
         kwargs = self._input_kwargs
         self.setParams(**kwargs)
 
     @staticmethod
-    def to_xyz(lat, lon, alt=0, in_radians=False):
+    def to_xyz(lat: float, lon: float, alt: float = 0, in_radians: bool = False) -> list[float]:
         if not in_radians:
             lat = np.deg2rad(lat)
             lon = np.deg2rad(lon)
@@ -65,18 +65,18 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
         semi_major_axis = 6378137  # WGS-84 semi-major axis
         e_squared = 6.6943799901377997e-3  # WGS-84 first eccentricity squared
 
-        n = semi_major_axis / np.sqrt(1 - e_squared * np.sin(lat) * np.sin(lat))
+        n_param = semi_major_axis / np.sqrt(1 - e_squared * np.sin(lat) * np.sin(lat))
 
-        x = (n + alt) * np.cos(lat) * np.cos(lon)
-        y = (n + alt) * np.cos(lat) * np.sin(lon)
-        z = (n * (1 - e_squared) + alt) * np.sin(lat)
+        x_coord = (n_param + alt) * np.cos(lat) * np.cos(lon)
+        y_coord = (n_param + alt) * np.cos(lat) * np.sin(lon)
+        z_coord = (n_param * (1 - e_squared) + alt) * np.sin(lat)
 
-        return [float(x), float(y), float(z)]
+        return [float(x_coord), float(y_coord), float(z_coord)]
 
     def _transform(self, dataset):
         # Define the UDF
-        t = ArrayType(FloatType())
-        udf_func = udf(LatLongToXYZ.to_xyz, t)
+        udf_type = ArrayType(FloatType())
+        udf_func = udf(LatLongToXYZ.to_xyz, udf_type)
 
         # Get the input columns
         in_cols = dataset.select(self.getInputCols()).columns
@@ -89,7 +89,7 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
         return dataset
 
     @keyword_only
-    def setParams(self, inputCols=None, outputCols=None):
+    def setParams(self, inputCols: list[str] = None, outputCols: list[str] = None):
         kwargs = self._input_kwargs
         return self._set(**kwargs)
 
@@ -137,16 +137,16 @@ def get_pipeline() -> Pipeline:
 
 def get_model_metrics(evaluator: RegressionEvaluator, predictions):
     rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
-    r2 = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
+    r2_score = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
     mae = evaluator.evaluate(predictions, {evaluator.metricName: "mae"})
 
-    return rmse, r2, mae
+    return rmse, r2_score, mae
 
 
-def df_to(df, path, out_format="csv"):
+def df_to(dataframe, path, out_format="csv"):
     msg.info(f"Saving data to {path}...")
     (
-        df.coalesce(1)
+        dataframe.coalesce(1)
         .write.mode("overwrite")
         .format(out_format)
         .option("sep", ",")
@@ -156,7 +156,7 @@ def df_to(df, path, out_format="csv"):
     msg.good(f"Data saved to {path}")
 
 
-def make_features_decriptions(spark):
+def make_features_descriptions(spark):
     description = []
 
     for column in CATEGORICAL_COLS:
@@ -307,7 +307,7 @@ def main():
     pipeline = get_pipeline()
 
     # Save feature extraction description
-    make_features_decriptions(spark)
+    make_features_descriptions(spark)
 
     # Get data
     cars = spark.read.format("avro").table(
