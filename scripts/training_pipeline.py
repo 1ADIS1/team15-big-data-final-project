@@ -133,6 +133,17 @@ def get_model_metrics(evaluator: RegressionEvaluator, predictions):
     return rmse, r2, mae
 
 
+def df_to_csv(df, path):
+    (
+        df.coalesce(1)
+        .write.mode("overwrite")
+        .format("csv")
+        .option("sep", ",")
+        .option("header", "true")
+        .save(path)
+    )
+
+
 def main():
     spark = (
         SparkSession.builder.appName(f"{TEAM} - spark ML")
@@ -152,9 +163,7 @@ def main():
     spark.sql("USE team15_projectdb").show()
     spark.sql("SHOW TABLES").show()
 
-    print(
-        spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show()
-    )
+    spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show()
 
     # Get pipeline
     pipeline = get_pipeline()
@@ -173,7 +182,7 @@ def main():
     outputs = {}
 
     # Train models
-    for model_name in ["dt", "lr"]:
+    for model_name in ["lr", "dt"]:
         evaluator = RegressionEvaluator(labelCol="label", predictionCol="prediction")
 
         if model_name == "lr":
@@ -209,45 +218,60 @@ def main():
         model_best = cv_model.bestModel
 
         # Get and save the best models
-        os.makedirs("project/models/", exist_ok=True)
-        model_best.write().overwrite().save(f"project/models/{model_name}")
+        os.makedirs("models/", exist_ok=True)
+        model_best.write().overwrite().save(f"models/{model_name}_model")
 
         # Get and save the predictions
         predictions = model_best.transform(test_data)
 
-        os.makedirs("project/predictions/", exist_ok=True)
-        (
-            predictions.select("label", "prediction")
-            .coalesce(1)
-            .write.mode("overwrite")
-            .format("csv")
-            .option("sep", ",")
-            .save(f"project/predictions/{model_name}_predictions.csv")
+        os.makedirs("output/", exist_ok=True)
+        df_to_csv(
+            predictions.select("label", "prediction"),
+            f"output/{model_name}_predictions.csv",
         )
 
-        # Save the model and predictions
-        outputs[model_name] = (model_best, predictions)
+        # Get and save the best hyperparameters
+        if model_name == "lr":
+            hyperparams = {
+                "regParam": model_best.getRegParam(),
+                "elasticNetParam": model_best.getElasticNetParam(),
+            }
+        elif model_name == "dt":
+            hyperparams = {
+                "maxDepth": model_best.getMaxDepth(),
+                "minInstancesPerNode": model_best.getMinInstancesPerNode(),
+            }
 
+        df_hyperparams = spark.createDataFrame([hyperparams], list(hyperparams.keys()))
+        df_hyperparams.show(truncate=False)
+
+        os.makedirs("output/", exist_ok=True)
+        df_to_csv(df_hyperparams, f"output/{model_name}_hyperparams.csv")
+
+        # Get and save the metrics
+        metrics = get_model_metrics(evaluator, predictions)
+
+        os.makedirs("output/", exist_ok=True)
+        df_to_csv(
+            spark.createDataFrame([metrics], ["RMSE", "R2", "MAE"]),
+            f"output/{model_name}_evaluation.csv",
+        )
+
+        # Save the model, predictions and metrics
+        outputs[model_name] = (model_best, predictions, metrics)
         print(f"Finished working on {model_name}")
 
     # Create data frame to report performance of the models
     models = [
-        [str(outputs["lr"][0]), *get_model_metrics(evaluator, outputs["lr"][1])],
-        [str(outputs["dt"][0]), *get_model_metrics(evaluator, outputs["dt"][1])],
+        [str(outputs["lr"][0]), *outputs["lr"][2]],
+        [str(outputs["dt"][0]), *outputs["dt"][2]],
     ]
 
-    df = spark.createDataFrame(models, ["model", "RMSE", "R2", "MAE"])
-    df.show(truncate=False)
+    df_models = spark.createDataFrame(models, ["model", "RMSE", "R2", "MAE"])
+    df_models.show(truncate=False)
 
-    # Save it to HDFS
-    (
-        df.coalesce(1)
-        .write.mode("overwrite")
-        .format("csv")
-        .option("sep", ",")
-        .option("header", "true")
-        .save("project/output/evaluation.csv")
-    )
+    # Save model comparison
+    df_to_csv(df_models, "output/evaluation.csv")
 
 
 if __name__ == "__main__":
