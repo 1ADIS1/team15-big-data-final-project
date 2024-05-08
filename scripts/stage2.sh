@@ -9,7 +9,10 @@ mv *.avsc output
 hdfs dfs -mkdir -p project/warehouse/avsc
 hdfs dfs -put -f output/*.avsc project/warehouse/avsc
 
-# 
+# Create hive tables from stage 1 andd db
+beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/db.hql
+
+# Create partitions
 beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team15 -p $password -f sql/create_partitioned_tables.hql
 
 # 1st query
