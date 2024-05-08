@@ -52,10 +52,9 @@ LOCATION_COLS = [
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
     @keyword_only
-    def __init__(self, inputCols: List[str] = None, outputCols: List[str] = None):
-        super(LatLongToXYZ, self).__init__()
-        kwargs = self._input_kwargs
-        self.setParams(**kwargs)
+    def __init__(self, inputCols: List[str] = None, outputCols: List[str] = None, **kwargs):
+        super().__init__()
+        self._set(inputCols=inputCols, outputCols=outputCols, **kwargs)
 
     @staticmethod
     def to_xyz(lat: float, lon: float, alt: float = 0, in_radians: bool = False) -> List[float]:
@@ -89,11 +88,6 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
         dataset = dataset.withColumn(self.getOutputCols()[2], udf_func(*in_cols)[2])
 
         return dataset
-
-    @keyword_only
-    def setParams(self, inputCols: List[str] = None, outputCols: List[str] = None):
-        kwargs = self._input_kwargs
-        return self._set(**kwargs)
 
 
 def get_pipeline() -> Pipeline:
