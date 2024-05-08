@@ -10,7 +10,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/lr_predictions';
 
-LOAD DATA INPATH 'project/output/lr_predictions.csv' OVERWRITE INTO TABLE lr_predictions;
+LOAD DATA INPATH 'project/output/lr_predictions.csv/combined.csv' OVERWRITE INTO TABLE lr_predictions;
 
 -- Load DT model predictions
 DROP TABLE IF EXISTS dt_predictions;
@@ -22,7 +22,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/dt_predictions';
 
-LOAD DATA INPATH 'project/output/dt_predictions.csv' OVERWRITE INTO TABLE dt_predictions;
+LOAD DATA INPATH 'project/output/dt_predictions.csv/combined.csv' OVERWRITE INTO TABLE dt_predictions;
 
 -- load Comparison evaluations
 DROP TABLE IF EXISTS evaluation;
@@ -36,7 +36,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/evaluation';
 
-LOAD DATA INPATH 'project/output/evaluation.csv' OVERWRITE INTO TABLE evaluation;
+LOAD DATA INPATH 'project/output/evaluation.csv/combined.csv' OVERWRITE INTO TABLE evaluation;
 
 -- load LR evaluations
 DROP TABLE IF EXISTS lr_evaluation;
@@ -50,7 +50,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/lr_evaluation';
 
-LOAD DATA INPATH 'project/output/lr_evaluation.csv' OVERWRITE INTO TABLE lr_evaluation;
+LOAD DATA INPATH 'project/output/lr_evaluation.csv/combined.csv' OVERWRITE INTO TABLE lr_evaluation;
 
 -- load LR evaluations
 DROP TABLE IF EXISTS dt_evaluation;
@@ -64,7 +64,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/dt_evaluation';
 
-LOAD DATA INPATH 'project/output/dt_evaluation.csv' OVERWRITE INTO TABLE dt_evaluation;
+LOAD DATA INPATH 'project/output/dt_evaluation.csv/combined.csv' OVERWRITE INTO TABLE dt_evaluation;
 
 -- load Hyper-parameters optimization for Linear Regression
 DROP TABLE IF EXISTS lr_hyperparameters;
@@ -76,7 +76,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/lr_hyperparameters';
 
-LOAD DATA INPATH 'project/output/lr_hyperparameters.csv' OVERWRITE INTO TABLE lr_hyperparameters;
+LOAD DATA INPATH 'project/output/lr_hyperparameters.csv/combined.csv' OVERWRITE INTO TABLE lr_hyperparameters;
 
 -- load Hyper-parameters optimization for Decision Tree
 DROP TABLE IF EXISTS dt_hyperparameters;
@@ -88,7 +88,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/dt_hyperparameters';
 
-LOAD DATA INPATH 'project/output/dt_hyperparameters.csv' OVERWRITE INTO TABLE dt_hyperparameters;
+LOAD DATA INPATH 'project/output/dt_hyperparameters.csv/combined.csv' OVERWRITE INTO TABLE dt_hyperparameters;
 
 -- load Feature extraction 
 DROP TABLE IF EXISTS feature_extraction;
@@ -100,4 +100,4 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/feature_extraction';
 
-LOAD DATA INPATH 'project/output/feature_extraction.csv' OVERWRITE INTO TABLE feature_extraction;
+LOAD DATA INPATH 'project/output/feature_extraction.csv/combined.csv' OVERWRITE INTO TABLE feature_extraction;
