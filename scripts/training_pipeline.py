@@ -42,9 +42,7 @@ NUMERICAL_COLS = [
     "odometer",
 ]
 
-LOCATION_COLS = [
-    "latitude", "longitude"
-]
+LOCATION_COLS = ["latitude", "longitude"]
 
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
@@ -143,28 +141,25 @@ def df_to_csv(df, path):
         .format("csv")
         .option("sep", ",")
         .option("header", "true")
-        .save(path)
+        .write.csv(path)
     )
 
 
 def make_features_decriptions(spark):
     description = []
+
     for column in CATEGORICAL_COLS:
-        description.append([
-            column,
-            'Transformed with OneHotEncoding'
-        ])
+        description.append([column, "Transformed with OneHotEncoding"])
+
     for column in NUMERICAL_COLS:
-        description.append([
-            column,
-            'No additional modifiations'
-        ])
+        description.append([column, "No additional modifiations"])
+
     for column in LOCATION_COLS:
-        description.append([
-            column,
-            'Transformed to XYZ coordinate'
-        ])
-    df_descriptions = spark.createDataFrame(description, ['feature_name', 'feature_extraction_description'])
+        description.append([column, "Transformed to XYZ coordinate"])
+
+    df_descriptions = spark.createDataFrame(
+        description, ["feature_name", "feature_extraction_description"]
+    )
     df_descriptions.show(truncate=False)
 
     df_to_csv(df_descriptions, f"project/output/feature_extraction.csv")
@@ -291,12 +286,13 @@ def main():
         print(f"Finished working on {model_name}")
 
     # Create data frame to report performance of the models
-    models = [
-        [str(outputs["lr"][0]), *outputs["lr"][2]],
-        [str(outputs["dt"][0]), *outputs["dt"][2]],
-    ]
-
-    df_models = spark.createDataFrame(models, ["model", "RMSE", "R2", "MAE"])
+    df_models = spark.createDataFrame(
+        [
+            [str(outputs["lr"][0]), *outputs["lr"][2]],
+            [str(outputs["dt"][0]), *outputs["dt"][2]],
+        ],
+        ["model", "RMSE", "R2", "MAE"],
+    )
     df_models.show(truncate=False)
 
     # Save model comparison
