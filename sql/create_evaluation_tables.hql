@@ -5,10 +5,10 @@ DROP TABLE IF EXISTS lr_predictions;
 CREATE EXTERNAL TABLE lr_predictions(
 label DOUBLE,
 prediction DOUBLE
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_predictions';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/lr_predictions';
 
 LOAD DATA INPATH 'project/output/lr_predictions.csv/combined.csv' OVERWRITE INTO TABLE lr_predictions;
 
@@ -17,10 +17,10 @@ DROP TABLE IF EXISTS dt_predictions;
 CREATE EXTERNAL TABLE dt_predictions(
 labrl DOUBLE,
 prediction DOUBLE
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/dt_predictions';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/dt_predictions';
 
 LOAD DATA INPATH 'project/output/dt_predictions.csv/combined.csv' OVERWRITE INTO TABLE dt_predictions;
 
@@ -31,10 +31,10 @@ model STRING,
 RMSE DOUBLE,
 R2 DOUBLE,
 MAE DOUBLE
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/evaluation';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/evaluation';
 
 LOAD DATA INPATH 'project/output/evaluation.csv/combined.csv' OVERWRITE INTO TABLE evaluation;
 
@@ -45,10 +45,10 @@ model STRING,
 RMSE DOUBLE,
 R2 DOUBLE,
 MAE DOUBLE
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_evaluation';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/lr_evaluation';
 
 LOAD DATA INPATH 'project/output/lr_evaluation.csv/combined.csv' OVERWRITE INTO TABLE lr_evaluation;
 
@@ -59,10 +59,10 @@ model STRING,
 RMSE DOUBLE,
 R2 DOUBLE,
 MAE DOUBLE
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/dt_evaluation';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/dt_evaluation';
 
 LOAD DATA INPATH 'project/output/dt_evaluation.csv/combined.csv' OVERWRITE INTO TABLE dt_evaluation;
 
@@ -71,10 +71,10 @@ DROP TABLE IF EXISTS lr_hyperparameters;
 CREATE EXTERNAL TABLE lr_hyperparameters(
 regParam DOUBLE,
 elasticNetParam DOUBLE
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_hyperparameters';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/lr_hyperparameters';
 
 LOAD DATA INPATH 'project/output/lr_hyperparameters.csv/combined.csv' OVERWRITE INTO TABLE lr_hyperparameters;
 
@@ -83,10 +83,10 @@ DROP TABLE IF EXISTS dt_hyperparameters;
 CREATE EXTERNAL TABLE dt_hyperparameters(
 maxDepth INT,
 minInstancesPerNode INT
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/dt_hyperparameters';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/dt_hyperparameters';
 
 LOAD DATA INPATH 'project/output/dt_hyperparameters.csv/combined.csv' OVERWRITE INTO TABLE dt_hyperparameters;
 
@@ -95,9 +95,9 @@ DROP TABLE IF EXISTS feature_extraction;
 CREATE EXTERNAL TABLE feature_extraction(
 feature_name STRING,
 feature_extraction_description STRING
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/feature_extraction';
+);
+-- ROW FORMAT DELIMITED
+-- FIELDS TERMINATED BY ','
+-- LOCATION 'project/hive/warehouse/feature_extraction';
 
 LOAD DATA INPATH 'project/output/feature_extraction.csv/combined.csv' OVERWRITE INTO TABLE feature_extraction;
