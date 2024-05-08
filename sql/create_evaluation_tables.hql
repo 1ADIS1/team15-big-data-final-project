@@ -7,10 +7,8 @@ label DOUBLE,
 prediction DOUBLE
 )
 ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ',';
--- LOCATION 'project/hive/warehouse/lr_predictions';
-
-LOAD DATA LOCAL INPATH 'output/lr_predictions.csv' OVERWRITE INTO TABLE lr_predictions;
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/lr_predictions';
 
 -- Load DT model predictions
 DROP TABLE IF EXISTS dt_predictions;
@@ -19,10 +17,8 @@ labrl DOUBLE,
 prediction DOUBLE
 )
 ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ',';
--- LOCATION 'project/hive/warehouse/dt_predictions';
-
-LOAD DATA LOCAL INPATH 'output/dt_predictions.csv' OVERWRITE INTO TABLE dt_predictions;
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/dt_predictions';
 
 -- load Comparison evaluations
 DROP TABLE IF EXISTS evaluation;
@@ -33,71 +29,59 @@ R2 DOUBLE,
 MAE DOUBLE
 )
 ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ',';
--- LOCATION 'project/hive/warehouse/evaluation';
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/evaluation';
 
-LOAD DATA LOCAL INPATH 'output/evaluation.csv' OVERWRITE INTO TABLE evaluation;
+-- load LR evaluations
+DROP TABLE IF EXISTS lr_evaluation;
+CREATE EXTERNAL TABLE lr_evaluation(
+model STRING,
+RMSE DOUBLE,
+R2 DOUBLE,
+MAE DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/lr_evaluation';
 
--- -- load LR evaluations
--- DROP TABLE IF EXISTS lr_evaluation;
--- CREATE EXTERNAL TABLE lr_evaluation(
--- model STRING,
--- RMSE DOUBLE,
--- R2 DOUBLE,
--- MAE DOUBLE
--- )
--- ROW FORMAT DELIMITED
--- FIELDS TERMINATED BY ',';
--- -- LOCATION 'project/hive/warehouse/lr_evaluation';
+-- load LR evaluations
+DROP TABLE IF EXISTS dt_evaluation;
+CREATE EXTERNAL TABLE dt_evaluation(
+model STRING,
+RMSE DOUBLE,
+R2 DOUBLE,
+MAE DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/dt_evaluation';
 
--- LOAD DATA INPATH 'project/output/lr_evaluation.csv/combined.csv' OVERWRITE INTO TABLE lr_evaluation;
+-- load Hyper-parameters optimization for Linear Regression
+DROP TABLE IF EXISTS lr_hyperparams;
+CREATE EXTERNAL TABLE lr_hyperparams(
+regParam DOUBLE,
+elasticNetParam DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/lr_hyperparams';
 
--- -- load LR evaluations
--- DROP TABLE IF EXISTS dt_evaluation;
--- CREATE EXTERNAL TABLE dt_evaluation(
--- model STRING,
--- RMSE DOUBLE,
--- R2 DOUBLE,
--- MAE DOUBLE
--- )
--- ROW FORMAT DELIMITED
--- FIELDS TERMINATED BY ',';
--- -- LOCATION 'project/hive/warehouse/dt_evaluation';
+-- load Hyper-parameters optimization for Decision Tree
+DROP TABLE IF EXISTS dt_hyperparams;
+CREATE EXTERNAL TABLE dt_hyperparams(
+maxDepth INT,
+minInstancesPerNode INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/lr_hyperparams';
 
--- LOAD DATA INPATH 'project/output/dt_evaluation.csv/combined.csv' OVERWRITE INTO TABLE dt_evaluation;
-
--- -- load Hyper-parameters optimization for Linear Regression
--- DROP TABLE IF EXISTS lr_hyperparameters;
--- CREATE EXTERNAL TABLE lr_hyperparameters(
--- regParam DOUBLE,
--- elasticNetParam DOUBLE
--- )
--- ROW FORMAT DELIMITED
--- FIELDS TERMINATED BY ',';
--- -- LOCATION 'project/hive/warehouse/lr_hyperparameters';
-
--- LOAD DATA INPATH 'project/output/lr_hyperparameters.csv/combined.csv' OVERWRITE INTO TABLE lr_hyperparameters;
-
--- -- load Hyper-parameters optimization for Decision Tree
--- DROP TABLE IF EXISTS dt_hyperparameters;
--- CREATE EXTERNAL TABLE dt_hyperparameters(
--- maxDepth INT,
--- minInstancesPerNode INT
--- );
--- -- ROW FORMAT DELIMITED
--- -- FIELDS TERMINATED BY ','
--- -- LOCATION 'project/hive/warehouse/dt_hyperparameters';
-
--- LOAD DATA INPATH 'project/output/dt_hyperparameters.csv/combined.csv' OVERWRITE INTO TABLE dt_hyperparameters;
-
--- -- load Feature extraction 
--- DROP TABLE IF EXISTS feature_extraction;
--- CREATE EXTERNAL TABLE feature_extraction(
--- feature_name STRING,
--- feature_extraction_description STRING
--- );
--- -- ROW FORMAT DELIMITED
--- -- FIELDS TERMINATED BY ','
--- -- LOCATION 'project/hive/warehouse/feature_extraction';
-
--- LOAD DATA INPATH 'project/output/feature_extraction.csv/combined.csv' OVERWRITE INTO TABLE feature_extraction;
+-- load Feature extraction 
+DROP TABLE IF EXISTS feature_extraction;
+CREATE EXTERNAL TABLE feature_extraction(
+feature_name STRING,
+feature_extraction_description STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/feature_extraction';
