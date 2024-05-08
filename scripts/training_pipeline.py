@@ -152,7 +152,7 @@ def make_features_decriptions(spark):
         description.append([column, "Transformed with OneHotEncoding"])
 
     for column in NUMERICAL_COLS:
-        description.append([column, "No additional modifiations"])
+        description.append([column, "No additional modifications"])
 
     for column in LOCATION_COLS:
         description.append([column, "Transformed to XYZ coordinate"])
