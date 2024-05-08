@@ -1,5 +1,7 @@
 """ Training pipeline for the car price prediction project """
 
+from typing import List, Tuple
+
 from pyspark import keyword_only
 
 from pyspark.ml import Pipeline, Transformer
@@ -50,13 +52,13 @@ LOCATION_COLS = [
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
     @keyword_only
-    def __init__(self, inputCols: list[str] = None, outputCols: list[str] = None):
+    def __init__(self, inputCols: List[str] = None, outputCols: List[str] = None):
         super(LatLongToXYZ, self).__init__()
         kwargs = self._input_kwargs
         self.setParams(**kwargs)
 
     @staticmethod
-    def to_xyz(lat: float, lon: float, alt: float = 0, in_radians: bool = False) -> list[float]:
+    def to_xyz(lat: float, lon: float, alt: float = 0, in_radians: bool = False) -> List[float]:
         if not in_radians:
             lat = np.deg2rad(lat)
             lon = np.deg2rad(lon)
@@ -89,7 +91,7 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
         return dataset
 
     @keyword_only
-    def setParams(self, inputCols: list[str] = None, outputCols: list[str] = None):
+    def setParams(self, inputCols: List[str] = None, outputCols: List[str] = None):
         kwargs = self._input_kwargs
         return self._set(**kwargs)
 
@@ -135,7 +137,7 @@ def get_pipeline() -> Pipeline:
     return pipeline
 
 
-def get_model_metrics(evaluator: RegressionEvaluator, predictions):
+def get_model_metrics(evaluator: RegressionEvaluator, predictions) -> Tuple:
     rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
     r2_score = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
     mae = evaluator.evaluate(predictions, {evaluator.metricName: "mae"})
@@ -178,7 +180,7 @@ def make_features_descriptions(spark):
     df_to(df_descriptions, "project/output/feature_extraction.csv")
 
 
-def get_train_test_split(data, train_size: float = 0.8):
+def get_train_test_split(data, train_size: float = 0.8) -> Tuple:
     train_data = data.limit(int(data.count() * train_size))
     test_data = data.subtract(train_data)
 
@@ -186,7 +188,7 @@ def get_train_test_split(data, train_size: float = 0.8):
     df_to(train_data, "project/output/train_data.json", out_format="json")
     df_to(test_data, "project/output/test_data.json", out_format="json")
 
-    msg.success("Train and test data saved")
+    msg.good("Train and test data saved")
 
     return train_data, test_data
 
@@ -221,7 +223,7 @@ def train_models(spark, train_data, test_data):
         else:
             raise ValueError(f"Unknown model: {model_name}")
 
-        cv = CrossValidator(
+        cross_val = CrossValidator(
             estimator=model,
             estimatorParamMaps=grid_search,
             evaluator=evaluator,
@@ -229,7 +231,7 @@ def train_models(spark, train_data, test_data):
         )
 
         # Search for best models
-        model_best = cv.fit(train_data).bestModel
+        model_best = cross_val.fit(train_data).bestModel
 
         # Get and save the best models
         msg.good(f"Best model for {model_name}")
