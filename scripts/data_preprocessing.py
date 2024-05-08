@@ -39,23 +39,23 @@ NON_IMPUTABLE_COLUMNS = [
 class DataTransformer:
     """Abstract Data Transformer Class"""
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         """
         Fit the transformer to the data.
 
-        :param X: The input data
+        :param x: The input data
         :param y: The target data
         :param kwargs: Additional arguments
         """
         raise NotImplementedError
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Transform the input data.
 
-        :param X: The input data
+        :param x: The input data
         :param y: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
@@ -63,18 +63,18 @@ class DataTransformer:
         raise NotImplementedError
 
     def fit_transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Fit the transformer to the data and transform the input data.
 
-        :param X: The input data
+        :param x: The input data
         :param y: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
-        self.fit(X=X, y=y, **kwargs)
-        return self.transform(X=X, y=y, **kwargs)
+        self.fit(x=x, y=y, **kwargs)
+        return self.transform(x=x, y=y, **kwargs)
 
 
 class TransformPipeline:
@@ -83,49 +83,49 @@ class TransformPipeline:
     def __init__(self, transformations: List[DataTransformer]):
         self.transformations = transformations
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         """
         Fit each transformation in the pipeline
 
-        :param X: The input data
+        :param x: The input data
         :param y: The target data
         :param kwargs: Additional arguments
         """
-        X = X.copy()
+        x = x.copy()
         for layer in self.transformations:
-            X = layer.fit_transform(X, y=y, **kwargs)
+            x = layer.fit_transform(x, y=y, **kwargs)
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Apply each transformation in the pipeline to the input data
 
-        :param X: The input data
+        :param x: The input data
         :param y: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
-        X = X.copy()
+        x = x.copy()
         for layer in self.transformations:
-            X = layer.transform(X, y=y, **kwargs)
-        return X
+            x = layer.transform(x, y=y, **kwargs)
+        return x
 
     def fit_transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Fit and transform the input data using the pipeline
 
-        :param X: The input data
+        :param x: The input data
         :param y: The target data
         :param kwargs: Additional arguments
         :return: The transformed data
         """
-        X = X.copy()
+        x = x.copy()
         for layer in self.transformations:
-            X = layer.fit_transform(X, y=y, **kwargs)
-        return X
+            x = layer.fit_transform(x, y=y, **kwargs)
+        return x
 
 
 class NormalizeUrl(DataTransformer):
@@ -134,21 +134,21 @@ class NormalizeUrl(DataTransformer):
     def __init__(self, column: str = "region_url"):
         self.column = column
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Extracts the domain from the given column
 
-        :param X: The input data
+        :param x: The input data
         :return: The transformed data
         """
-        X = X.copy()
-        X[self.column] = X[self.column].apply(self.extract_domain_url)
-        return X
+        x = x.copy()
+        x[self.column] = x[self.column].apply(self.extract_domain_url)
+        return x
 
     @staticmethod
     def extract_domain_url(url: str) -> str:
@@ -170,22 +170,22 @@ class DropNonImputable(DataTransformer):
     def __init__(self, non_imputable_cols: List[str]):
         self.non_imputable_cols = non_imputable_cols
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Drops rows with non-imputable values in the specified columns
 
-        :param X: The input data
+        :param x: The input data
         :return: The transformed data
         """
-        X = X.copy()
+        x = x.copy()
         for column_name in self.non_imputable_cols:
-            X = X[X[column_name].notna()]
-        return X
+            x = x[x[column_name].notna()]
+        return x
 
 
 class DropColumns(DataTransformer):
@@ -194,20 +194,20 @@ class DropColumns(DataTransformer):
     def __init__(self, columns: List[str]):
         self.columns = columns
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Drops the specified columns
 
-        :param X: The input data
+        :param x: The input data
         :return: The transformed data
         """
-        X = X.copy()
-        return X.drop(columns=self.columns)
+        x = x.copy()
+        return x.drop(columns=self.columns)
 
 
 class ApplyTransform(DataTransformer):
@@ -217,21 +217,21 @@ class ApplyTransform(DataTransformer):
         self.column = column_name
         self.transform_function = transform_function
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Transforms specified column by given transform function
 
-        :param X: The input data
+        :param x: The input data
         :return: The transformed data
         """
-        X = X.copy()
-        X[self.column] = X[self.column].apply(self.transform_function)
-        return X
+        x = x.copy()
+        x[self.column] = x[self.column].apply(self.transform_function)
+        return x
 
 
 class FillNa(DataTransformer):
@@ -241,61 +241,71 @@ class FillNa(DataTransformer):
         self.column = column_name
         self.value = value
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
         """
         Fills missing values in a `self.column` as `self.value`
 
-        :param X: The input data
+        :param x: The input data
         :return: The transformed data
         """
-        X = X.copy()
-        X[self.column] = X[self.column].fillna(self.value)
-        return X
+        x = x.copy()
+        x[self.column] = x[self.column].fillna(self.value)
+        return x
 
 
 class QuantileFilter(DataTransformer):
+    """Filter rows based on quantile values of a column"""
+
     def __init__(self, column_name: str, lower_quantile: float, upper_quantile: float):
         self.column = column_name
         self.lower_quantile = lower_quantile
         self.upper_quantile = upper_quantile
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
-        self.lower_bound = X[self.column].quantile(self.lower_quantile)
-        self.upper_bound = X[self.column].quantile(self.upper_quantile)
+        self.lower_bound = None
+        self.upper_bound = None
+
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+        self.lower_bound = x[self.column].quantile(self.lower_quantile)
+        self.upper_bound = x[self.column].quantile(self.upper_quantile)
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
-        X = X.copy()
-        return X[
-            (X[self.column] >= self.lower_bound) & (X[self.column] <= self.upper_bound)
+        if not self.lower_bound or not self.upper_bound:
+            raise ValueError("Bounds not set. Call fit before transform")
+
+        x = x.copy()
+        return x[
+            (x[self.column] >= self.lower_bound) & (x[self.column] <= self.upper_bound)
         ]
 
 
 class DropIfEqual(DataTransformer):
+    """Drop rows where a value in a column is equal to a specified value"""
+
     def __init__(self, column_name: str, value):
         self.column = column_name
         self.value = value
 
-    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
+    def fit(self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs):
         pass
 
     def transform(
-        self, X: pd.DataFrame, y: pd.DataFrame = None, **kwargs
+        self, x: pd.DataFrame, y: pd.DataFrame = None, **kwargs
     ) -> pd.DataFrame:
-        X = X.copy()
-        return X[X[self.column] != self.value]
+        x = x.copy()
+        return x[x[self.column] != self.value]
 
 
 def main():
     """Main function for console script to preprocess data"""
 
-    # Whole data preprocessing pipeline
+    # Preprocessing pipeline definition
     pipeline = TransformPipeline(
         [
             DropColumns(DROP_COLUMNS),
@@ -314,7 +324,17 @@ def main():
     # Control script via console
     parser = argparse.ArgumentParser(
         prog="DataPreprocessor",
-        description="Drops too ambiguous columns, Drop rows with non-imputable values and Normalize urls",
+        description="""
+            Preprocesses the car price prediction dataset.
+
+            The script performs the following operations:
+                - Drops unnecessary columns,
+                - Fills missing values with imputable values,
+                - Drops rows if price is 0,
+                - Filters out price outliers,
+                - Extracts domain from region_url,
+                - Converts year and odometer columns to integers,
+        """,
     )
     parser.add_argument(
         "filename",
