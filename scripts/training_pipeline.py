@@ -135,6 +135,7 @@ def get_model_metrics(evaluator: RegressionEvaluator, predictions):
 
 
 def df_to(df, path, format="csv"):
+    msg.info(f"Saving data to {path}...")
     (
         df.coalesce(1)
         .write.mode("overwrite")
@@ -143,6 +144,7 @@ def df_to(df, path, format="csv"):
         .option("header", "true")
         .save(path)
     )
+    msg.good(f"Data saved to {path}")
 
 
 def make_features_decriptions(spark):
@@ -166,11 +168,13 @@ def make_features_decriptions(spark):
 
 
 def get_train_test_split(data, train_size: float = 0.8):
-    (train_data, test_data) = data.randomSplit([train_size, 1 - train_size])
+    train_data = data.limit(int(data.count() * 0.8))
+    test_data = data.subtract(train_data)
 
     # Save the train and test data
     df_to(train_data, "project/output/train_data.json", format="json")
     df_to(test_data, "project/output/test_data.json", format="json")
+
     msg.good("Train and test data saved")
 
     return train_data, test_data
@@ -181,12 +185,13 @@ def main():
         SparkSession.builder.appName(f"{TEAM} - spark ML")
         .master("yarn")
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+        .config("spark.executor.instances", 6)
         .config("spark.sql.warehouse.dir", WAREHOUSE)
         .config("spark.sql.avro.compression.codec", "snappy")
         .enableHiveSupport()
         .getOrCreate()
     )
-    spark.sparkContext.setLogLevel("WARN")
+    # spark.sparkContext.setLogLevel("WARN")
     msg.good("Spark session created")
 
     # We can also add
@@ -202,23 +207,29 @@ def main():
     spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show()
 
     # Get pipeline
+    msg.info("Creating pipeline...")
     pipeline = get_pipeline()
     msg.good("Pipeline created")
 
     # Save feature extraction description
+    msg.info("Extracting features...")
     make_features_decriptions(spark)
     msg.good("Feature extraction description saved")
 
     # Get data
+    msg.info("Loading dataset...")
     cars = spark.read.format("avro").table(
         "team15_projectdb.car_vehicles_ext_part_bucket"
     )
+    msg.good("Dataset loaded")
 
     data = pipeline.fit(cars).transform(cars)
     data = data.withColumnRenamed("price", "label")
 
     # Split data
+    msg.info("Splitting dataset...")
     (train_data, test_data) = get_train_test_split(data, train_size=0.8)
+    msg.good("Data splitted")
 
     outputs = {}
 
@@ -257,8 +268,7 @@ def main():
         )
 
         # Search for best models
-        cv_model = cv.fit(train_data)
-        model_best = cv_model.bestModel
+        model_best = cv.fit(train_data).bestModel
 
         # Get and save the best models
         model_best.write().overwrite().save(f"project/models/{model_name}_model")
@@ -321,6 +331,7 @@ def main():
 
     spark.stop()
     msg.good("Spark session closed")
+    msg.good("Done")
 
 
 if __name__ == "__main__":
