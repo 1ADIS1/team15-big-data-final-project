@@ -80,7 +80,7 @@ minInstancesPerNode INT
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_hyperparams';
+LOCATION 'project/hive/warehouse/dt_hyperparams'
 TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load Feature extraction 
