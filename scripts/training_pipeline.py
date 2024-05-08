@@ -1,18 +1,18 @@
-import os
-
 from pyspark import keyword_only
 
 from pyspark.ml import Pipeline, Transformer
+from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.feature import OneHotEncoder, StringIndexer, VectorAssembler
 from pyspark.ml.param.shared import HasInputCols, HasOutputCols
 from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+from pyspark.ml.regression import LinearRegression, DecisionTreeRegressor
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType, FloatType
 
-from pyspark.ml.regression import LinearRegression, DecisionTreeRegressor
-from pyspark.ml.evaluation import RegressionEvaluator
+
+from wasabi import msg
 
 import numpy as np
 
@@ -172,14 +172,20 @@ def main():
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
         .config("spark.sql.warehouse.dir", WAREHOUSE)
         .config("spark.sql.avro.compression.codec", "snappy")
+        .config("spark.executor.memory", "10g")
+        .config("spark.driver.memory", "10g")
         .enableHiveSupport()
         .getOrCreate()
     )
+    spark.sparkContext.setLogLevel("WARN")
+    msg.good("Spark session created")
 
     # We can also add
     # .config("spark.sql.catalogImplementation","hive")
     # But this is the default configuration
     # You can switch to Spark Catalog by setting "in-memory" for "spark.sql.catalogImplementation"
+    msg.info("Testing connection to Hive")
+
     spark.sql("SHOW DATABASES").show()
     spark.sql("USE team15_projectdb")
     spark.sql("SHOW TABLES").show()
@@ -188,9 +194,11 @@ def main():
 
     # Get pipeline
     pipeline = get_pipeline()
+    msg.good("Pipeline created")
 
     # Save feature extraction description
     make_features_decriptions(spark)
+    msg.good("Feature extraction description saved")
 
     # Get data
     cars = spark.read.format("avro").table(
@@ -211,6 +219,7 @@ def main():
 
         if model_name == "lr":
             model = LinearRegression()
+            msg.info("Training Linear Regression model")
 
             grid_search = (
                 ParamGridBuilder()
@@ -220,6 +229,7 @@ def main():
             )
         elif model_name == "dt":
             model = DecisionTreeRegressor()
+            msg.info("Training Decision Tree model")
 
             grid_search = (
                 ParamGridBuilder()
@@ -241,10 +251,6 @@ def main():
         cv_model = cv.fit(train_data)
         model_best = cv_model.bestModel
 
-        # Create dirs
-        os.makedirs("project/models/", exist_ok=True)
-        os.makedirs("project/output/", exist_ok=True)
-
         # Get and save the best models
         model_best.write().overwrite().save(f"project/models/{model_name}_model")
 
@@ -255,6 +261,7 @@ def main():
             predictions.select("label", "prediction"),
             f"project/output/{model_name}_predictions.csv",
         )
+        msg.good(f"Predictions saved for {model_name}")
 
         # Get and save the best hyperparameters
         if model_name == "lr":
@@ -272,6 +279,7 @@ def main():
         df_hyperparams.show(truncate=False)
 
         df_to_csv(df_hyperparams, f"project/output/{model_name}_hyperparams.csv")
+        msg.good(f"Hyperparameters saved for {model_name}")
 
         # Get and save the metrics
         metrics = get_model_metrics(evaluator, predictions)
@@ -280,10 +288,11 @@ def main():
             spark.createDataFrame([metrics], ["RMSE", "R2", "MAE"]),
             f"project/output/{model_name}_evaluation.csv",
         )
+        msg.good(f"Metrics saved for {model_name}")
 
         # Save the model, predictions and metrics
         outputs[model_name] = (model_best, predictions, metrics)
-        print(f"Finished working on {model_name}")
+        msg.good(f"Finished working on {model_name}")
 
     # Create data frame to report performance of the models
     df_models = spark.createDataFrame(
@@ -293,10 +302,15 @@ def main():
         ],
         ["model", "RMSE", "R2", "MAE"],
     )
+    msg.info("Model comparison")
     df_models.show(truncate=False)
 
     # Save model comparison
     df_to_csv(df_models, "project/output/evaluation.csv")
+    msg.good("Model comparison saved")
+
+    spark.stop()
+    msg.good("Spark session closed")
 
 
 if __name__ == "__main__":
