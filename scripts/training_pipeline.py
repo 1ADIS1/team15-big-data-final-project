@@ -42,6 +42,10 @@ NUMERICAL_COLS = [
     "odometer",
 ]
 
+LOCATION_COLS = [
+    "latitude", "longitude"
+]
+
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
     @keyword_only
@@ -105,11 +109,10 @@ def get_pipeline() -> Pipeline:
         result_cols += [cat_col_encoded]
 
     # Location lat long to xyz
-    location_cols_in = ["latitude", "longitude"]
     location_cols_out = ["x", "y", "z"]
 
     latlong_transformer = LatLongToXYZ(
-        inputCols=location_cols_in, outputCols=location_cols_out
+        inputCols=LOCATION_COLS, outputCols=location_cols_out
     )
 
     stages += [latlong_transformer]
@@ -144,6 +147,29 @@ def df_to_csv(df, path):
     )
 
 
+def make_features_decriptions(spark):
+    description = []
+    for column in CATEGORICAL_COLS:
+        description.append([
+            column,
+            'Transformed with OneHotEncoding'
+        ])
+    for column in NUMERICAL_COLS:
+        description.append([
+            column,
+            'No additional modifiations'
+        ])
+    for column in LOCATION_COLS:
+        description.append([
+            column,
+            'Transformed to XYZ coordinate'
+        ])
+    df_descriptions = spark.createDataFrame(description, ['feature_name', 'feature_extraction_description'])
+    df_descriptions.show(truncate=False)
+
+    df_to_csv(df_descriptions, f"project/output/feature_extraction.csv")
+
+
 def main():
     spark = (
         SparkSession.builder.appName(f"{TEAM} - spark ML")
@@ -167,6 +193,9 @@ def main():
 
     # Get pipeline
     pipeline = get_pipeline()
+
+    # Save feature extraction description
+    make_features_decriptions(spark)
 
     # Get data
     cars = spark.read.format("avro").table(
