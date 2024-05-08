@@ -8,7 +8,8 @@ prediction DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_predictions';
+LOCATION 'project/hive/warehouse/lr_predictions'
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- Load DT model predictions
 DROP TABLE IF EXISTS dt_predictions;
@@ -18,7 +19,8 @@ prediction DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/dt_predictions';
+LOCATION 'project/hive/warehouse/dt_predictions'
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load Comparison evaluations
 DROP TABLE IF EXISTS evaluation;
@@ -30,7 +32,8 @@ MAE DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/evaluation';
+LOCATION 'project/hive/warehouse/evaluation'
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load LR evaluations
 DROP TABLE IF EXISTS lr_evaluation;
@@ -42,7 +45,8 @@ MAE DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_evaluation';
+LOCATION 'project/hive/warehouse/lr_evaluation'
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load LR evaluations
 DROP TABLE IF EXISTS dt_evaluation;
@@ -54,7 +58,8 @@ MAE DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/dt_evaluation';
+LOCATION 'project/hive/warehouse/dt_evaluation'
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load Hyper-parameters optimization for Linear Regression
 DROP TABLE IF EXISTS lr_hyperparams;
@@ -64,7 +69,8 @@ elasticNetParam DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/lr_hyperparams';
+LOCATION 'project/hive/warehouse/lr_hyperparams'
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load Hyper-parameters optimization for Decision Tree
 DROP TABLE IF EXISTS dt_hyperparams;
@@ -75,6 +81,7 @@ minInstancesPerNode INT
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/lr_hyperparams';
+TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load Feature extraction 
 DROP TABLE IF EXISTS feature_extraction;
@@ -84,4 +91,5 @@ feature_extraction_description STRING
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/feature_extraction';
+LOCATION 'project/hive/warehouse/feature_extraction'
+TBLPROPERTIES ("skip.header.line.count"="1");
