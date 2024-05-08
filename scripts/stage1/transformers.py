@@ -1,9 +1,9 @@
 """ Script for implemented transformers """
 
 import re
+from typing import List
 
 from stage1.modules import DataTransformer
-from typing import List
 
 import pandas as pd
 
