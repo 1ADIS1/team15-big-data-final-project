@@ -1,3 +1,5 @@
+""" Training pipeline for the car price prediction project """
+
 from pyspark import keyword_only
 
 from pyspark.ml import Pipeline, Transformer
@@ -11,7 +13,6 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import ArrayType, FloatType
 
-
 from wasabi import msg
 
 import numpy as np
@@ -22,7 +23,6 @@ TEAM = "team15"
 
 # Location of your Hive database in HDFS
 WAREHOUSE = "project/hive/warehouse"
-
 
 CATEGORICAL_COLS = [
     "manufacturer",
@@ -42,7 +42,10 @@ NUMERICAL_COLS = [
     "odometer",
 ]
 
-LOCATION_COLS = ["latitude", "longitude"]
+LOCATION_COLS = [
+    "latitude",
+    "longitude",
+]
 
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
@@ -52,26 +55,28 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
         kwargs = self._input_kwargs
         self.setParams(**kwargs)
 
+    @staticmethod
+    def to_xyz(lat, lon, alt=0, in_radians=False):
+        if not in_radians:
+            lat = np.deg2rad(lat)
+            lon = np.deg2rad(lon)
+            alt = np.deg2rad(alt)
+
+        semi_major_axis = 6378137  # WGS-84 semi-major axis
+        e_squared = 6.6943799901377997e-3  # WGS-84 first eccentricity squared
+
+        n = semi_major_axis / np.sqrt(1 - e_squared * np.sin(lat) * np.sin(lat))
+
+        x = (n + alt) * np.cos(lat) * np.cos(lon)
+        y = (n + alt) * np.cos(lat) * np.sin(lon)
+        z = (n * (1 - e_squared) + alt) * np.sin(lat)
+
+        return [float(x), float(y), float(z)]
+
     def _transform(self, dataset):
-        def f(lat, lon, alt=0, in_radians=False):
-            if not in_radians:
-                lat = np.deg2rad(lat)
-                lon = np.deg2rad(lon)
-                alt = np.deg2rad(alt)
-
-            A = 6378137  # WGS-84 semi-major axis
-            E2 = 6.6943799901377997e-3  # WGS-84 first eccentricity squared
-            n = A / np.sqrt(1 - E2 * np.sin(lat) * np.sin(lat))
-
-            x = (n + alt) * np.cos(lat) * np.cos(lon)
-            y = (n + alt) * np.cos(lat) * np.sin(lon)
-            z = (n * (1 - E2) + alt) * np.sin(lat)
-
-            return [float(x), float(y), float(z)]
-
         # Define the UDF
         t = ArrayType(FloatType())
-        udf_func = udf(f, t)
+        udf_func = udf(LatLongToXYZ.to_xyz, t)
 
         # Get the input columns
         in_cols = dataset.select(self.getInputCols()).columns
@@ -90,6 +95,8 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
 
 
 def get_pipeline() -> Pipeline:
+    msg.info("Creating pipeline...")
+
     # Define the stages of the pipeline
     stages = []
     result_cols = NUMERICAL_COLS
@@ -123,6 +130,8 @@ def get_pipeline() -> Pipeline:
     # Create the pipeline
     pipeline = Pipeline(stages=stages)
 
+    msg.good("Pipeline created")
+
     return pipeline
 
 
@@ -134,12 +143,12 @@ def get_model_metrics(evaluator: RegressionEvaluator, predictions):
     return rmse, r2, mae
 
 
-def df_to(df, path, format="csv"):
+def df_to(df, path, out_format="csv"):
     msg.info(f"Saving data to {path}...")
     (
         df.coalesce(1)
         .write.mode("overwrite")
-        .format(format)
+        .format(out_format)
         .option("sep", ",")
         .option("header", "true")
         .save(path)
@@ -162,75 +171,27 @@ def make_features_decriptions(spark):
     df_descriptions = spark.createDataFrame(
         description, ["feature_name", "feature_extraction_description"]
     )
+
+    msg.info("Feature extraction description")
     df_descriptions.show(truncate=False)
 
-    df_to(df_descriptions, f"project/output/feature_extraction.csv")
+    df_to(df_descriptions, "project/output/feature_extraction.csv")
 
 
 def get_train_test_split(data, train_size: float = 0.8):
-    train_data = data.limit(int(data.count() * 0.8))
+    train_data = data.limit(int(data.count() * train_size))
     test_data = data.subtract(train_data)
 
     # Save the train and test data
-    df_to(train_data, "project/output/train_data.json", format="json")
-    df_to(test_data, "project/output/test_data.json", format="json")
+    df_to(train_data, "project/output/train_data.json", out_format="json")
+    df_to(test_data, "project/output/test_data.json", out_format="json")
 
-    msg.good("Train and test data saved")
+    msg.success("Train and test data saved")
 
     return train_data, test_data
 
 
-def main():
-    spark = (
-        SparkSession.builder.appName(f"{TEAM} - spark ML")
-        .master("yarn")
-        .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
-        .config("spark.executor.instances", 6)
-        .config("spark.sql.warehouse.dir", WAREHOUSE)
-        .config("spark.sql.avro.compression.codec", "snappy")
-        .enableHiveSupport()
-        .getOrCreate()
-    )
-    # spark.sparkContext.setLogLevel("WARN")
-    msg.good("Spark session created")
-
-    # We can also add
-    # .config("spark.sql.catalogImplementation","hive")
-    # But this is the default configuration
-    # You can switch to Spark Catalog by setting "in-memory" for "spark.sql.catalogImplementation"
-    msg.info("Testing connection to Hive")
-
-    spark.sql("SHOW DATABASES").show()
-    spark.sql("USE team15_projectdb")
-    spark.sql("SHOW TABLES").show()
-
-    spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show()
-
-    # Get pipeline
-    msg.info("Creating pipeline...")
-    pipeline = get_pipeline()
-    msg.good("Pipeline created")
-
-    # Save feature extraction description
-    msg.info("Extracting features...")
-    make_features_decriptions(spark)
-    msg.good("Feature extraction description saved")
-
-    # Get data
-    msg.info("Loading dataset...")
-    cars = spark.read.format("avro").table(
-        "team15_projectdb.car_vehicles_ext_part_bucket"
-    )
-    msg.good("Dataset loaded")
-
-    data = pipeline.fit(cars).transform(cars)
-    data = data.withColumnRenamed("price", "label")
-
-    # Split data
-    msg.info("Splitting dataset...")
-    (train_data, test_data) = get_train_test_split(data, train_size=0.8)
-    msg.good("Data splitted")
-
+def train_models(spark, train_data, test_data):
     outputs = {}
 
     # Train models
@@ -271,8 +232,8 @@ def main():
         model_best = cv.fit(train_data).bestModel
 
         # Get and save the best models
+        msg.good(f"Best model for {model_name}")
         model_best.write().overwrite().save(f"project/models/{model_name}_model")
-        msg.good(f"Model saved for {model_name}")
 
         # Get and save the predictions
         predictions = model_best.transform(test_data)
@@ -281,7 +242,6 @@ def main():
             predictions.select("label", "prediction"),
             f"project/output/{model_name}_predictions.csv",
         )
-        msg.good(f"Predictions saved for {model_name}")
 
         # Get and save the best hyperparameters
         if model_name == "lr":
@@ -296,10 +256,11 @@ def main():
             }
 
         df_hyperparams = spark.createDataFrame([hyperparams], list(hyperparams.keys()))
+
+        msg.info(f"Hyperparameters for {model_name}")
         df_hyperparams.show(truncate=False)
 
         df_to(df_hyperparams, f"project/output/{model_name}_hyperparams.csv")
-        msg.good(f"Hyperparameters saved for {model_name}")
 
         # Get and save the metrics
         metrics = get_model_metrics(evaluator, predictions)
@@ -308,11 +269,59 @@ def main():
             spark.createDataFrame([metrics], ["RMSE", "R2", "MAE"]),
             f"project/output/{model_name}_evaluation.csv",
         )
-        msg.good(f"Metrics saved for {model_name}")
 
         # Save the model, predictions and metrics
         outputs[model_name] = (model_best, predictions, metrics)
         msg.good(f"Finished working on {model_name}")
+
+    return outputs
+
+
+def main():
+    spark = (
+        SparkSession.builder.appName(f"{TEAM} - spark ML")
+        .master("yarn")
+        .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+        .config("spark.executor.instances", 6)
+        .config("spark.sql.warehouse.dir", WAREHOUSE)
+        .config("spark.sql.avro.compression.codec", "snappy")
+        .enableHiveSupport()
+        .getOrCreate()
+    )
+    # spark.sparkContext.setLogLevel("WARN")
+    msg.good("Spark session created")
+
+    # We can also add
+    # .config("spark.sql.catalogImplementation","hive")
+    # But this is the default configuration
+    # You can switch to Spark Catalog by setting "in-memory" for "spark.sql.catalogImplementation"
+    msg.info("Testing connection to Hive")
+
+    spark.sql("SHOW DATABASES").show()
+    spark.sql("USE team15_projectdb")
+    spark.sql("SHOW TABLES").show()
+
+    spark.sql("SELECT * FROM team15_projectdb.car_vehicles_ext_part_bucket").show()
+
+    # Get pipeline
+    pipeline = get_pipeline()
+
+    # Save feature extraction description
+    make_features_decriptions(spark)
+
+    # Get data
+    cars = spark.read.format("avro").table(
+        "team15_projectdb.car_vehicles_ext_part_bucket"
+    )
+    msg.good("Dataset loaded")
+
+    data = pipeline.fit(cars).transform(cars).withColumnRenamed("price", "label")
+
+    # Split data
+    (train_data, test_data) = get_train_test_split(data, train_size=0.8)
+
+    # Train models
+    outputs = train_models(spark, train_data, test_data)
 
     # Create data frame to report performance of the models
     df_models = spark.createDataFrame(
@@ -327,11 +336,9 @@ def main():
 
     # Save model comparison
     df_to(df_models, "project/output/evaluation.csv")
-    msg.good("Model comparison saved")
 
     spark.stop()
-    msg.good("Spark session closed")
-    msg.good("Done")
+    msg.good("Spark session closed. Done")
 
 
 if __name__ == "__main__":
