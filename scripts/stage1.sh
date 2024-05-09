@@ -1,4 +1,7 @@
 #!/bin/bash
+# Activate venv
+source ~/venv/bin/activate
+
 source secrets/.psql.pass
 
 # Import to PSQL

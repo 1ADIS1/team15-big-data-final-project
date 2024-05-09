@@ -1,4 +1,7 @@
 #!/bin/bash
+# Activate venv
+source ~/venv/bin/activate
+
 dataset_url="https://disk.yandex.com/d/NdpjIZDmP24kng"
 
 # Check if dataset already exists
