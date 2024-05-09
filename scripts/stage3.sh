@@ -10,7 +10,7 @@ rm -rf models
 mkdir models
 
 # Run training pipeline
-spark-submit --master yarn scripts/training_pipeline.py
+spark-submit --master yarn scripts/stage3/training_pipeline.py
 
 # Define function to merge CSVs and transfer them to HDFS and Hive
 function merge_csv_and_transfer() {
