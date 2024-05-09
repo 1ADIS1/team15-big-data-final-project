@@ -3,9 +3,9 @@
 import re
 from typing import List
 
-from stage1.modules import DataTransformer
-
 import pandas as pd
+
+from preprocess.modules import DataTransformer
 
 
 class NormalizeUrl(DataTransformer):
