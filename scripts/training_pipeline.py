@@ -51,13 +51,28 @@ LOCATION_COLS = [
 
 
 class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
+    """Transform latitude and longitude to XYZ coordinates"""
+
     @keyword_only
-    def __init__(self, inputCols: List[str] = None, outputCols: List[str] = None, **kwargs):
+    def __init__(
+        self, inputCols: List[str] = None, outputCols: List[str] = None, **kwargs
+    ):
         super().__init__()
         self._set(inputCols=inputCols, outputCols=outputCols, **kwargs)
 
     @staticmethod
-    def to_xyz(lat: float, lon: float, alt: float = 0, in_radians: bool = False) -> List[float]:
+    def to_xyz(
+        lat: float, lon: float, alt: float = 0, in_radians: bool = False
+    ) -> List[float]:
+        """
+        Convert latitude and longitude to XYZ coordinates
+
+        :param lat: Latitude
+        :param lon: Longitude
+        :param alt: Altitude
+        :param in_radians: If True, the input is in radians
+        :return: XYZ coordinates
+        """
         if not in_radians:
             lat = np.deg2rad(lat)
             lon = np.deg2rad(lon)
@@ -75,6 +90,12 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
         return [float(x_coord), float(y_coord), float(z_coord)]
 
     def _transform(self, dataset):
+        """
+        Transform the dataset
+
+        :param dataset: Input dataset
+        :return: Transformed dataset
+        """
         # Define the UDF
         udf_type = ArrayType(FloatType())
         udf_func = udf(LatLongToXYZ.to_xyz, udf_type)
@@ -91,6 +112,7 @@ class LatLongToXYZ(Transformer, HasInputCols, HasOutputCols):
 
 
 def get_pipeline() -> Pipeline:
+    """Create the pipeline for the car price prediction project"""
     msg.info("Creating pipeline...")
 
     # Define the stages of the pipeline
@@ -131,7 +153,16 @@ def get_pipeline() -> Pipeline:
     return pipeline
 
 
-def get_model_metrics(evaluator: RegressionEvaluator, predictions) -> Tuple:
+def get_model_metrics(
+    evaluator: RegressionEvaluator, predictions
+) -> Tuple[float, float, float]:
+    """
+    Get the model metrics for the predictions
+
+    :param evaluator: The evaluator
+    :param predictions: The predictions
+    :return: The RMSE, R2 and MAE metrics
+    """
     rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
     r2_score = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
     mae = evaluator.evaluate(predictions, {evaluator.metricName: "mae"})
@@ -139,7 +170,14 @@ def get_model_metrics(evaluator: RegressionEvaluator, predictions) -> Tuple:
     return rmse, r2_score, mae
 
 
-def df_to(dataframe, path, out_format="csv"):
+def df_to(dataframe, path: str, out_format: str = "csv"):
+    """
+    Save the dataframe to the specified path
+
+    :param dataframe: The dataframe to save
+    :param path: The path to save the dataframe
+    :param out_format: The format to save the dataframe
+    """
     msg.info(f"Saving data to {path}...")
     (
         dataframe.coalesce(1)
@@ -152,7 +190,12 @@ def df_to(dataframe, path, out_format="csv"):
     msg.good(f"Data saved to {path}")
 
 
-def make_features_descriptions(spark):
+def make_features_descriptions(spark: SparkSession):
+    """
+    Create a dataframe with the feature extraction description
+
+    :param spark: The Spark session
+    """
     description = []
 
     for column in CATEGORICAL_COLS:
@@ -175,6 +218,13 @@ def make_features_descriptions(spark):
 
 
 def get_train_test_split(data, train_size: float = 0.8) -> Tuple:
+    """
+    Split the data into train and test sets
+
+    :param data: The data to split
+    :param train_size: The size of the train set
+    :return: The train and test sets
+    """
     train_data = data.limit(int(data.count() * train_size))
     test_data = data.subtract(train_data)
 
@@ -187,7 +237,15 @@ def get_train_test_split(data, train_size: float = 0.8) -> Tuple:
     return train_data, test_data
 
 
-def train_models(spark, train_data, test_data):
+def train_models(spark: SparkSession, train_data, test_data) -> dict:
+    """
+    Train the models and save the results
+
+    :param spark: The Spark session
+    :param train_data: The training data
+    :param test_data: The test data
+    :return: The trained models and their results
+    """
     outputs = {}
 
     # Train models
@@ -274,6 +332,7 @@ def train_models(spark, train_data, test_data):
 
 
 def main():
+    """Training pipeline for the car price prediction project"""
     spark = (
         SparkSession.builder.appName(f"{TEAM} - spark ML")
         .master("yarn")
