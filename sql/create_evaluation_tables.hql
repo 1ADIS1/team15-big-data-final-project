@@ -30,24 +30,24 @@ CREATE EXTERNAL TABLE evaluation(
     R2 DOUBLE,
     MAE DOUBLE
 )
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/evaluation'
-TBLPROPERTIES ("skip.header.line.count"="1");
-
--- load Comparison evaluations
-DROP TABLE IF EXISTS evaluation;
-CREATE EXTERNAL TABLE evaluation(
-    model STRING,
-    RMSE DOUBLE,
-    R2 DOUBLE,
-    MAE DOUBLE
-)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 LOCATION 'project/hive/warehouse/evaluation'
 TBLPROPERTIES ("skip.header.line.count"="1");
 
 -- load LR evaluations
+DROP TABLE IF EXISTS lr_evaluation;
+CREATE EXTERNAL TABLE lr_evaluation(
+    model STRING,
+    RMSE DOUBLE,
+    R2 DOUBLE,
+    MAE DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LOCATION 'project/hive/warehouse/lr_evaluation'
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+-- load DT evaluations
 DROP TABLE IF EXISTS dt_evaluation;
 CREATE EXTERNAL TABLE dt_evaluation(
     RMSE DOUBLE,
