@@ -343,7 +343,7 @@ def main():
         .enableHiveSupport()
         .getOrCreate()
     )
-    # spark.sparkContext.setLogLevel("WARN")
+    spark.sparkContext.setLogLevel("WARN")
     msg.good("Spark session created")
 
     # We can also add
