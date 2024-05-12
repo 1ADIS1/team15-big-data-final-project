@@ -37,7 +37,6 @@ TBLPROPERTIES ("skip.header.line.count"="1");
 -- load LR evaluations
 DROP TABLE IF EXISTS lr_evaluation;
 CREATE EXTERNAL TABLE lr_evaluation(
-    model STRING,
     RMSE DOUBLE,
     R2 DOUBLE,
     MAE DOUBLE
